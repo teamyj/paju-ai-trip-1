@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 루미가 떠나는 파주 랜선 여행 | 파주 AI-ROAD</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Jua (제목용 둥근 폰트), Gowun Dodum & Noto Sans KR (본문 가독성) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            title: ['"Jua"', 'sans-serif'],
+            cute: ['"Gamja Flower"', 'cursive'],
+            sans: ['"Noto Sans KR"', 'sans-serif'],
+          },
+          colors: {
+            lumi: {
+              light: '#E0F2FE',
+              sky: '#38BDF8',
+              blue: '#2563EB',
+              deep: '#1D4ED8',
+              yellow: '#FACC15',
+              orange: '#FB923C',
+              green: '#4ADE80',
+              emerald: '#10B981',
+              pink: '#F472B6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    input, textarea {
+      user-select: text;
+    }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(180deg, #BAE6FD 0%, #E0F2FE 40%, #DCFCE7 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .font-title {
+      font-family: 'Jua', sans-serif;
+      letter-spacing: 0.02em;
+    }
+    .font-cute {
+      font-family: 'Gamja Flower', cursive;
+    }
+
+    /* 구름 둥실둥실 애니메이션 */
+    @keyframes floatCloud {
+      0%, 100% { transform: translateX(0px) translateY(0px); }
+      50% { transform: translateX(18px) translateY(-6px); }
+    }
+    .cloud-anim-1 { animation: floatCloud 7s ease-in-out infinite; }
+    .cloud-anim-2 { animation: floatCloud 9s ease-in-out infinite reverse; }
+
+    /* 루미 대기 중 통통 튀는 애니메이션 */
+    @keyframes lumiIdle {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.03); }
+    }
+    .lumi-idle {
+      animation: lumiIdle 2s ease-in-out infinite;
+    }
+
+    /* 루미 점프 이동 시 회전/탄성 효과 */
+    @keyframes lumiCelebration {
+      0% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.2) rotate(-8deg); }
+      50% { transform: scale(1.25) rotate(8deg); }
+      75% { transform: scale(1.15) rotate(-4deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .lumi-celebrate {
+      animation: lumiCelebration 0.7s ease-in-out;
+    }
+
+    /* 현재 진행 노드 펄스 효과 */
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+      70% { transform: scale(1.06); box-shadow: 0 0 0 18px rgba(37, 99, 235, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+    }
+    .node-active-pulse {
+      animation: pulseRing 2s infinite;
+    }
+
+    /* 말풍선 위아래 바운스 */
+    @keyframes speechBounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, -6px); }
+    }
+    .speech-bounce {
+      animation: speechBounce 1.4s ease-in-out infinite;
+    }
+
+    /* 바람개비 회전 */
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin-slow {
+      animation: spinSlow 8s linear infinite;
+      transform-origin: center;
+    }
+    .spin-fast {
+      animation: spinSlow 1.2s linear infinite;
+      transform-origin: center;
+    }
+
+    /* 버튼 입체감 (3D Game Button) */
+    .btn-3d-blue {
+      background: linear-gradient(180deg, #38BDF8 0%, #2563EB 100%);
+      box-shadow: 0 6px 0 #1E40AF, 0 10px 15px rgba(37, 99, 235, 0.35);
+      transition: all 0.15s ease;
+    }
+    .btn-3d-blue:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #1E40AF, 0 12px 20px rgba(37, 99, 235, 0.45);
+    }
+    .btn-3d-blue:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #1E40AF, 0 4px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-3d-yellow {
+      background: linear-gradient(180deg, #FDE047 0%, #F59E0B 100%);
+      box-shadow: 0 6px 0 #B45309, 0 10px 15px rgba(245, 158, 11, 0.35);
+      transition: all 0.15s ease;
+    }
+    .btn-3d-yellow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #B45309, 0 12px 20px rgba(245, 158, 11, 0.45);
+    }
+    .btn-3d-yellow:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #B45309, 0 4px 8px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-3d-green {
+      background: linear-gradient(180deg, #4ADE80 0%, #16A34A 100%);
+      box-shadow: 0 6px 0 #15803D, 0 10px 15px rgba(22, 163, 74, 0.35);
+      transition: all 0.15s ease;
+    }
+    .btn-3d-green:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #15803D, 0 12px 20px rgba(22, 163, 74, 0.45);
+    }
+    .btn-3d-green:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #15803D, 0 4px 8px rgba(22, 163, 74, 0.3);
+    }
+
+    /* 지도 보드 배경 패턴 */
+    .map-board {
+      background:
+        radial-gradient(circle at 18% 20%, rgba(254, 240, 138, 0.45) 0%, transparent 28%),
+        radial-gradient(circle at 82% 35%, rgba(186, 230, 253, 0.6) 0%, transparent 32%),
+        radial-gradient(circle at 25% 75%, rgba(187, 247, 208, 0.65) 0%, transparent 35%),
+        linear-gradient(180deg, #ECFEFF 0%, #F0FDF4 55%, #DCFCE7 100%);
+      box-shadow: inset 0 0 0 6px #FFFFFF, 0 20px 45px rgba(15, 23, 42, 0.12);
+    }
+
+    /* 점선 경로 흐름 애니메이션 */
+    @keyframes dashFlow {
+      to {
+        stroke-dashoffset: -40;
+      }
+    }
+    .path-animated {
+      animation: dashFlow 1.6s linear infinite;
+    }
+
+    /* 커스텀 스크롤바 */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #E0F2FE;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #38BDF8;
+      border-radius: 9999px;
+      border: 2px solid #E0F2FE;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0284C7;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-sky-200 selection:text-blue-900">
+
+  <!-- 폭죽(Confetti) 캔버스 오버레이 -->
+  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+  <!-- ==================== 상단 고정 헤더 (진행도 & 컨트롤) ==================== -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b-4 border-sky-300 shadow-lg">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        
+        <!-- 좌측: 로고 및 캐릭터 미니 프로필 -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 p-1 shadow-md border-2 border-white flex items-center justify-center overflow-hidden">
+              <img src="./character.png" alt="AI 루미" class="lumi-img w-full h-full object-contain drop-shadow" onerror="handleLumiImageError(this)" />
+              <span class="absolute -bottom-0.5 right-0.5 bg-yellow-400 text-[10px] font-title px-1.5 rounded-full text-slate-900 border border-white">AI</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="bg-blue-600 text-white text-xs font-title px-2.5 py-0.5 rounded-full shadow-sm">파주 AI-ROAD</span>
+                <span class="text-xs font-bold text-sky-600 hidden sm:inline">초등 3~4학년 체육·창의 융합</span>
+              </div>
+              <h1 class="font-title text-xl sm:text-2xl md:text-3xl text-slate-800 tracking-tight flex items-center gap-1.5">
+                AI 루미가 떠나는 <span class="text-blue-600">파주 랜선 여행</span>
+                <span class="text-lg sm:text-2xl">✈️</span>
+              </h1>
+            </div>
+          </div>
+
+          <!-- 모바일용 퀵 사운드/스탬프 버튼 -->
+          <div class="flex items-center gap-1.5 lg:hidden">
+            <button onclick="toggleSound()" id="soundBtnMobile" class="p-2 rounded-xl bg-sky-100 text-blue-700 hover:bg-sky-200 transition" title="효과음 켜기/끄기">
+              <i class="fa-solid fa-volume-high text-lg"></i>
+            </button>
+            <button onclick="openStampBookModal()" class="px-3 py-1.5 rounded-xl bg-amber-400 text-slate-900 font-title text-sm shadow border-2 border-white">
+              🏅 스탬프북
+            </button>
+          </div>
+        </div>
+
+        <!-- 중앙: 12차시 진행 프로그레스 바 & 미니 스탬프 12개 -->
+        <div class="flex-1 max-w-2xl bg-sky-50/90 border-2 border-sky-200 rounded-2xl px-3.5 py-2 shadow-inner">
+          <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-1.5">
+              <span class="text-sm font-title text-blue-800">🌟 나의 파주 탐험 달성도</span>
+              <span id="currentLandmarkBadge" class="text-xs bg-white text-blue-600 font-bold px-2 py-0.5 rounded-full border border-sky-200">
+                현재 위치: 1. 화석정
+              </span>
+            </div>
+            <div class="font-title text-sm sm:text-base text-blue-700">
+              <span id="completedCountText" class="text-amber-500 text-lg">0</span> / 12 차시 완료
+              (<span id="progressPercentText">0%</span>)
+            </div>
+          </div>
+
+          <!-- 프로그레스 게이지 바 -->
+          <div class="w-full h-3.5 bg-slate-200 rounded-full overflow-hidden p-0.5 border border-slate-300">
+            <div id="progressBarFill" class="h-full rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-emerald-400 transition-all duration-700 ease-out relative" style="width: 0%">
+              <div class="absolute inset-0 bg-white/25 animate-pulse"></div>
+            </div>
+          </div>
+
+          <!-- 12차시 미니 스탬프 도트 (클릭 시 해당 차시 이동/열기) -->
+          <div id="headerStampBar" class="grid grid-cols-12 gap-1 mt-2">
+            <!-- JS에서 동적 생성 -->
+          </div>
+        </div>
+
+        <!-- 우측: 액션 버튼 모음 (스탬프북, 수료증, 선생님 모드, 초기화) -->
+        <div class="hidden lg:flex items-center gap-2">
+          <button onclick="openStampBookModal()" class="btn-3d-yellow px-3.5 py-2 rounded-2xl font-title text-slate-900 text-sm flex items-center gap-1.5">
+            <span>🏅</span>
+            <span>스탬프북</span>
+          </button>
+
+          <button onclick="openCertificateModal()" id="certHeaderBtn" class="px-3.5 py-2 rounded-2xl font-title text-sm flex items-center gap-1.5 border-2 border-emerald-400 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition shadow-sm">
+            <span>🎓</span>
+            <span>수료증</span>
+          </button>
+
+          <!-- 선생님 자유 이동 모드 토글 -->
+          <label class="flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-2xl border border-slate-300 transition" title="모든 차시 잠금을 해제하여 수업 시 원하는 차시를 바로 열 수 있습니다">
+            <input type="checkbox" id="teacherModeToggle" onchange="toggleTeacherMode(this.checked)" class="sr-only peer">
+            <div class="w-8 h-4 bg-slate-400 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all relative peer-checked:bg-blue-600"></div>
+            <span class="text-xs font-bold text-slate-700">선생님 모드</span>
+          </label>
+
+          <button onclick="toggleSound()" id="soundBtnDesktop" class="p-2.5 rounded-2xl bg-sky-100 text-blue-700 hover:bg-sky-200 border border-sky-200 transition" title="효과음 켜기/끄기">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+
+          <button onclick="openResetModal()" class="p-2.5 rounded-2xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 transition" title="여행 기록 처음부터 다시하기">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- 모바일 보조 컨트롤 바 -->
+      <div class="flex lg:hidden items-center justify-between mt-2 pt-2 border-t border-sky-100 text-xs">
+        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-100 px-2.5 py-1 rounded-xl border border-slate-300">
+          <input type="checkbox" id="teacherModeToggleMobile" onchange="toggleTeacherMode(this.checked)" class="accent-blue-600">
+          <span class="font-bold text-slate-700">선생님 자유이동 모드</span>
+        </label>
+        <div class="flex items-center gap-2">
+          <button onclick="openCertificateModal()" class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">
+            🎓 수료증 보기
+          </button>
+          <button onclick="openResetModal()" class="px-2.5 py-1 rounded-xl bg-rose-50 text-rose-600 font-bold border border-rose-200">
+            🔄 초기화
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 메인 컨텐츠 영역 ==================== -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 py-5">
+
+    <!-- 상단 루미의 환영 배너 & 현재 미션 퀵 가이드 -->
+    <section class="mb-6 bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 rounded-3xl p-4 sm:p-5 text-white shadow-xl border-4 border-white relative overflow-hidden">
+      <!-- 배경 장식 원 -->
+      <div class="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-white/10 pointer-events-none"></div>
+      <div class="absolute right-24 -bottom-12 w-32 h-32 rounded-full bg-yellow-300/20 pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <!-- 루미 캐릭터 배너 이미지 -->
+          <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/95 p-1.5 shadow-lg border-2 border-yellow-300 flex-shrink-0 relative">
+            <img src="./character.png" alt="AI 루미" class="lumi-img w-full h-full object-contain lumi-idle" onerror="handleLumiImageError(this)" />
+            <span class="absolute -top-2 -left-2 bg-yellow-400 text-slate-900 font-title text-xs px-2 py-0.5 rounded-full shadow">안녕!</span>
+          </div>
+          <div>
+            <div class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs sm:text-sm font-bold mb-1">
+              <span>🤖 AI 여행 가이드 루미의 한마디</span>
+            </div>
+            <h2 id="bannerGuideTitle" class="font-title text-lg sm:text-2xl text-yellow-200 drop-shadow">
+              "친구들 반가워! 나와 함께 파주의 멋진 명소 6곳으로 신나는 랜선 여행을 떠나 볼까?"
+            </h2>
+            <p id="bannerGuideSub" class="text-xs sm:text-sm text-sky-50 mt-1">
+              지도에서 반짝이는 <strong class="text-yellow-300 underline">현재 차시 버튼</strong>을 클릭해 오늘의 수업 미션을 확인하고 완료해 보세요!
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 w-full md:w-auto justify-end">
+          <button onclick="openCurrentSessionModal()" class="btn-3d-yellow w-full md:w-auto px-5 py-3 rounded-2xl font-title text-slate-900 text-base sm:text-lg flex items-center justify-center gap-2 whitespace-nowrap">
+            <span>🚀 지금 진행할 미션 열기</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 지도 범례 및 안내 바 -->
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-2">
+      <div class="flex flex-wrap items-center gap-3 text-xs sm:text-sm font-bold text-slate-700">
+        <span class="flex items-center gap-1.5 bg-white/90 px-3 py-1.5 rounded-full shadow-sm border border-sky-200">
+          <span class="w-3.5 h-3.5 rounded-full bg-amber-400 inline-block border border-amber-600"></span> 완료한 차시 (복습 가능)
+        </span>
+        <span class="flex items-center gap-1.5 bg-white/90 px-3 py-1.5 rounded-full shadow-sm border border-sky-200">
+          <span class="w-3.5 h-3.5 rounded-full bg-blue-600 inline-block animate-ping"></span> 현재 진행할 차시 (루미 위치)
+        </span>
+        <span class="flex items-center gap-1.5 bg-white/90 px-3 py-1.5 rounded-full shadow-sm border border-sky-200">
+          <span class="w-3.5 h-3.5 rounded-full bg-slate-300 inline-block border border-slate-400"></span> 잠긴 차시
+        </span>
+      </div>
+      <div class="text-xs sm:text-sm font-title text-blue-800 bg-sky-100/90 px-3 py-1.5 rounded-full border border-sky-300">
+        🗺️ 이동 순서: 1.화석정 ➔ 2.용미리 ➔ 3.헤이리 ➔ 4.출판도시 ➔ 5.임진강 ➔ 6.평화누리공원
+      </div>
+    </div>
+
+    <!-- ==================== 파주 AI-ROAD 인터랙티브 모험 지도 ==================== -->
+    <section id="mapContainer" class="relative map-board rounded-[2.2rem] p-4 sm:p-8 overflow-hidden min-h-[920px] border-4 border-sky-300">
+
+      <!-- 배경 장식 일러스트 (구름, 강물, 언덕, 나무 SVG) -->
+      <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 1200 950" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="riverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7DD3FC" stop-opacity="0.55" />
+            <stop offset="50%" stop-color="#38BDF8" stop-opacity="0.45" />
+            <stop offset="100%" stop-color="#60A5FA" stop-opacity="0.55" />
+          </linearGradient>
+          <linearGradient id="hillGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#BBF7D0" stop-opacity="0.7" />
+            <stop offset="100%" stop-color="#86EFAC" stop-opacity="0.3" />
+          </linearGradient>
+        </defs>
+
+        <!-- 부드러운 초록 언덕 배경 -->
+        <path d="M0,220 Q320,120 650,240 T1200,190 L1200,950 L0,950 Z" fill="url(#hillGrad1)" />
+        <path d="M0,620 Q420,520 820,650 T1200,590 L1200,950 L0,950 Z" fill="#DCFCE7" opacity="0.7" />
+
+        <!-- 임진강 물결 배경 데코 -->
+        <path d="M-40,760 C260,690 480,860 790,750 C980,680 1100,770 1250,710 L1250,860 C1080,910 940,820 760,880 C450,960 240,810 -40,890 Z" fill="url(#riverGrad)" />
+        <path d="M50,810 Q220,770 390,820 T750,800 T1120,780" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="14 14" opacity="0.7" />
+
+        <!-- 떠다니는 구름 장식 -->
+        <g class="cloud-anim-1" opacity="0.85">
+          <ellipse cx="170" cy="70" rx="55" ry="26" fill="#FFFFFF" />
+          <ellipse cx="140" cy="78" rx="35" ry="20" fill="#FFFFFF" />
+          <ellipse cx="205" cy="78" rx="38" ry="20" fill="#FFFFFF" />
+        </g>
+        <g class="cloud-anim-2" opacity="0.8">
+          <ellipse cx="980" cy="65" rx="60" ry="28" fill="#FFFFFF" />
+          <ellipse cx="945" cy="75" rx="38" ry="22" fill="#FFFFFF" />
+          <ellipse cx="1020" cy="74" rx="40" ry="22" fill="#FFFFFF" />
+        </g>
+      </svg>
+
+      <!-- 노드 간 연결 점선 경로 SVG (JS에서 정확한 노드 좌표로 실시간 렌더링) -->
+      <svg id="roadmapSvgLayer" class="absolute inset-0 w-full h-full pointer-events-none z-10">
+        <!-- 배경 도로 테두리 -->
+        <path id="roadBasePath" d="" fill="none" stroke="#CBD5E1" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+        <path id="roadInnerPath" d="" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+        <!-- 완료된 구간 하이라이트 길 -->
+        <path id="roadActivePath" d="" fill="none" stroke="#38BDF8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+        <!-- 점선 가이드라인 -->
+        <path id="roadDashPath" d="" fill="none" stroke="#2563EB" stroke-width="4" stroke-dasharray="12 12" stroke-linecap="round" stroke-linejoin="round" class="path-animated" />
+      </svg>
+
+      <!-- ==================== 6개 파주 명소 카드 그리드 (뱀 모양 S-커브 배치) ==================== -->
+      <div id="landmarksGrid" class="relative z-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pt-6 pb-12">
+        <!-- JS에서 6개 명소 카드와 12개 차시 노드를 렌더링합니다 -->
+      </div>
+
+      <!-- ==================== 지도 위를 통통 튀며 이동하는 메인 캐릭터 '루미' ==================== -->
+      <div id="mapLumiAvatar" class="absolute z-30 pointer-events-none transition-none" style="left: 0px; top: 0px; width: 96px; height: 96px; transform: translate(-50%, -88%);">
+        <!-- 루미 머리 위 말풍선 -->
+        <div id="lumiMapBubble" class="speech-bounce absolute -top-9 left-1/2 -translate-x-1/2 bg-yellow-300 text-slate-900 font-title text-xs sm:text-sm px-3 py-1 rounded-full shadow-md border-2 border-white whitespace-nowrap">
+          출발! 클릭해요 👇
+        </div>
+        <!-- 루미 캐릭터 본체 -->
+        <div id="lumiAvatarInner" class="w-full h-full lumi-idle relative flex items-center justify-center">
+          <!-- 발 밑 그림자 -->
+          <div class="absolute bottom-1 w-14 h-4 bg-blue-900/25 rounded-full blur-[2px]"></div>
+          <!-- 캐릭터 이미지 (./character.png 우선 로드 + 폴백) -->
+          <img src="./character.png" alt="AI 루미 캐릭터" class="lumi-img w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-[0_8px_10px_rgba(37,99,235,0.4)] relative z-10" onerror="handleLumiImageError(this)" />
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 하단 교육과정 요약 안내 카드 -->
+    <section class="mt-6 bg-white/90 rounded-3xl p-4 sm:p-6 border-2 border-sky-200 shadow-md">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="font-title text-lg sm:text-xl text-slate-800 flex items-center gap-2">
+            <span>📘 파주 AI-ROAD 12차시 교육과정 한눈에 보기</span>
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600">
+            각 명소마다 <strong>홀수 차시(1·3·5·7·9·11차시)는 신나는 체육 AI 챌린지</strong>, <strong>짝수 차시(2·4·6·8·10·12차시)는 창의 융합 표현 활동</strong>으로 구성되어 있어요!
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="px-3 py-1 rounded-full bg-sky-100 text-blue-700 font-bold text-xs">🏃 홀수 차시: AI 체력 기르기</span>
+          <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-bold text-xs">🎨 짝수 차시: 상상·창작 활동</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== 1. 차시별 수업 미션 팝업 모달 ==================== -->
+  <div id="missionModal" class="fixed inset-0 z-40 hidden items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-sm">
+    <div id="missionModalCard" class="bg-white rounded-[2rem] max-w-2xl w-full max-h-[92vh] overflow-y-auto border-4 border-sky-400 shadow-2xl transform transition-all scale-95 opacity-0">
+      
+      <!-- 모달 상단 헤더 -->
+      <div id="modalHeaderBg" class="bg-gradient-to-r from-sky-400 to-blue-600 p-4 sm:p-6 text-white relative">
+        <button onclick="closeMissionModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 hover:bg-white/35 text-white flex items-center justify-center text-xl transition" title="닫기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span id="modalSessionBadge" class="bg-yellow-300 text-slate-900 font-title text-sm sm:text-base px-3 py-0.5 rounded-full shadow">
+            1차시
+          </span>
+          <span id="modalLandmarkBadge" class="bg-white/25 backdrop-blur-sm text-white font-bold text-xs sm:text-sm px-3 py-0.5 rounded-full">
+            📍 화석정
+          </span>
+          <span id="modalCategoryBadge" class="bg-emerald-400 text-slate-900 font-bold text-xs px-2.5 py-0.5 rounded-full">
+            🏃 체육 AI 챌린지
+          </span>
+        </div>
+
+        <h2 id="modalTitle" class="font-title text-2xl sm:text-3xl leading-snug drop-shadow pr-10">
+          평화누리길 랜선 여행 출발 준비 (체력 목표 세우기)
+        </h2>
+      </div>
+
+      <!-- 모달 본문 -->
+      <div class="p-4 sm:p-6 space-y-5">
+
+        <!-- 루미의 미션 가이드 박스 + 음성 듣기(TTS) -->
+        <div class="flex items-center gap-3.5 bg-sky-50 border-2 border-sky-200 rounded-2xl p-3.5">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white p-1 border-2 border-sky-300 flex-shrink-0 shadow-sm">
+            <img src="./character.png" alt="AI 루미" class="lumi-img w-full h-full object-contain lumi-idle" onerror="handleLumiImageError(this)" />
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-title text-sm text-blue-700">🤖 AI 루미의 미션 안내</span>
+              <button onclick="speakCurrentMission()" class="text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded-full flex items-center gap-1 transition shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 루미 목소리 듣기
+              </button>
+            </div>
+            <p id="modalLumiQuote" class="text-slate-700 text-sm sm:text-base font-medium leading-relaxed">
+              "화석정은 율곡 이이 선생님이 학문을 닦으시던 멋진 정자야! 여행을 떠나기 전 우리의 체력 목표를 세워 볼까?"
+            </p>
+          </div>
+        </div>
+
+        <!-- 오늘의 세부 활동 내용 (3단계 인터랙티브 체크리스트) -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <h3 class="font-title text-lg sm:text-xl text-slate-800 flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-blue-600 text-white inline-flex items-center justify-center text-sm">1</span>
+              <span>오늘의 수업 활동 순서 (완료한 활동을 눌러 체크해요!)</span>
+            </h3>
+            <span id="checklistCountText" class="text-xs font-bold text-blue-600 bg-sky-100 px-2.5 py-1 rounded-full">0 / 3 확인</span>
+          </div>
+          <div id="modalActivitiesList" class="space-y-2.5">
+            <!-- JS에서 3단계 세부 활동 카드 동적 생성 -->
+          </div>
+        </div>
+
+        <!-- 차시 맞춤형 미니 체험 활동 위젯 (AI 운동 카운터 또는 창의 표현 도구) -->
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-4 shadow-inner">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-title text-lg text-amber-900 flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-amber-500 text-white inline-flex items-center justify-center text-sm">2</span>
+              <span id="miniWidgetTitle">⚡ 루미와 함께하는 미니 체험 활동</span>
+            </h3>
+            <span class="text-xs font-bold bg-amber-200 text-amber-900 px-2.5 py-0.5 rounded-full">교실 참여 활동</span>
+          </div>
+          <div id="miniWidgetContainer">
+            <!-- JS에서 홀수/짝수 차시별 인터랙티브 위젯 렌더링 -->
+          </div>
+        </div>
+
+        <!-- 오늘의 미션 한 줄 다짐 / 작품 제목 / 소감 남기기 -->
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4">
+          <h3 class="font-title text-lg text-slate-800 flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 rounded-lg bg-emerald-500 text-white inline-flex items-center justify-center text-sm">3</span>
+            <span id="reflectionPromptTitle">✏️ 나의 미션 기록장 (한 줄 생각·다짐 적기)</span>
+          </h3>
+          <!-- 빠른 예시 문구 칩 (타자가 느린 3~4학년 배려) -->
+          <div id="quickChipsContainer" class="flex flex-wrap gap-1.5 mb-2.5">
+            <!-- JS에서 차시별 추천 예시 버튼 생성 -->
+          </div>
+          <input
+            type="text"
+            id="missionNoteInput"
+            placeholder="오늘 미션을 수행하며 느낀 점이나 나만의 답을 적어 보세요! (예시 버튼을 눌러도 돼요)"
+            class="w-full px-4 py-3 rounded-xl border-2 border-sky-200 focus:border-blue-500 focus:outline-none text-sm sm:text-base font-medium bg-white"
+          />
+        </div>
+
+        <!-- 미션 완료 대형 액션 버튼 -->
+        <div class="pt-2 flex flex-col sm:flex-row items-center gap-3">
+          <button
+            onclick="completeMissionFromModal()"
+            id="completeMissionBtn"
+            class="btn-3d-blue w-full py-4 px-6 rounded-2xl font-title text-white text-xl sm:text-2xl flex items-center justify-center gap-3"
+          >
+            <span>🎉 미션 완료! 다음 여행지로 출발!</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2. 스탬프북 모달 ==================== -->
+  <div id="stampBookModal" class="fixed inset-0 z-40 hidden items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-[2rem] max-w-3xl w-full max-h-[90vh] overflow-y-auto border-4 border-amber-400 shadow-2xl p-5 sm:p-7">
+      <div class="flex items-center justify-between pb-4 border-b-2 border-amber-100">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🏅</span>
+          <div>
+            <h2 class="font-title text-2xl sm:text-3xl text-slate-800">파주 AI-ROAD 탐험 스탬프북</h2>
+            <p class="text-xs sm:text-sm text-slate-500">미션을 완료할 때마다 멋진 황금 스탬프와 내가 적은 기록이 저장돼요!</p>
+          </div>
+        </div>
+        <button onclick="closeStampBookModal()" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="stampBookGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 my-5">
+        <!-- JS에서 12차시 스탬프 카드 생성 -->
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="closeStampBookModal()" class="btn-3d-blue px-6 py-2.5 rounded-xl font-title text-white text-base">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 3. 12차시 완주 명예 탐험가 수료증 모달 ==================== -->
+  <div id="certificateModal" class="fixed inset-0 z-40 hidden items-center justify-center p-3 sm:p-5 bg-slate-900/65 backdrop-blur-sm">
+    <div class="bg-gradient-to-b from-amber-50 via-white to-sky-50 rounded-[2rem] max-w-2xl w-full max-h-[92vh] overflow-y-auto border-8 border-double border-amber-400 shadow-2xl p-5 sm:p-8 relative">
+      <button onclick="closeCertificateModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-700 flex items-center justify-center text-xl">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center space-y-3">
+        <div class="inline-block bg-amber-400 text-slate-900 font-title text-sm px-4 py-1 rounded-full shadow">
+          🏆 파주 AI-ROAD 12차시 완주 기념
+        </div>
+        <h2 class="font-title text-3xl sm:text-4xl text-blue-800 tracking-wide">
+          파주 랜선 여행 명예 탐험가 임명장
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600">
+          학교와 이름을 입력하면 나만의 멋진 임명장이 완성됩니다!
+        </p>
+
+        <!-- 학생 이름 입력 폼 -->
+        <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
+          <input id="certSchoolInput" type="text" placeholder="파주초등학교 3학년 1반" oninput="updateCertPreview()" class="px-3 py-2 rounded-xl border-2 border-amber-300 text-sm font-bold text-center w-48 bg-white" value="파주초등학교 3학년" />
+          <input id="certNameInput" type="text" placeholder="홍길동" oninput="updateCertPreview()" class="px-3 py-2 rounded-xl border-2 border-blue-400 text-sm font-bold text-center w-36 bg-white" value="멋진 탐험가" />
+        </div>
+
+        <!-- 임명장 본문 카드 -->
+        <div class="mt-4 bg-white rounded-3xl p-5 sm:p-6 border-4 border-amber-300 shadow-inner text-left relative overflow-hidden">
+          <div class="flex flex-col sm:flex-row items-center gap-5">
+            <div class="w-28 h-28 rounded-3xl bg-sky-50 border-2 border-sky-300 p-2 flex-shrink-0 flex items-center justify-center shadow">
+              <img src="./character.png" alt="AI 루미" class="lumi-img w-full h-full object-contain lumi-idle" onerror="handleLumiImageError(this)" />
+            </div>
+            <div class="space-y-2 text-center sm:text-left">
+              <div class="text-sm font-bold text-slate-500" id="certPreviewSchool">파주초등학교 3학년</div>
+              <div class="font-title text-2xl sm:text-3xl text-slate-900">
+                명예 탐험가: <span id="certPreviewName" class="text-blue-600 underline decoration-wavy decoration-amber-400">멋진 탐험가</span>
+              </div>
+              <p class="text-sm sm:text-base text-slate-700 leading-relaxed pt-1">
+                위 학생은 AI 친구 <strong>'루미'</strong>와 함께 화석정, 용미리 마애이불입상, 헤이리마을, 파주출판도시, 임진강, 평화누리공원을 여행하며 <strong>튼튼한 체력</strong>과 <strong>반짝이는 창의력</strong>으로 모든 미션을 훌륭히 완수하였기에 이 임명장을 수여합니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-amber-200 flex items-center justify-between text-xs sm:text-sm font-title text-slate-600">
+            <span id="certDateText">2026년 파주 AI-ROAD 탐험대</span>
+            <span class="text-blue-700 text-base">🤖 AI 가이드 루미 & 선생님 드림 💮</span>
+          </div>
+        </div>
+
+        <div class="pt-4 flex flex-wrap justify-center gap-3">
+          <button onclick="triggerConfetti(); playFanfareSound();" class="btn-3d-yellow px-6 py-3 rounded-2xl font-title text-slate-900 text-lg flex items-center gap-2">
+            <span>🎊 축하 폭죽 터뜨리기!</span>
+          </button>
+          <button onclick="window.print()" class="btn-3d-green px-6 py-3 rounded-2xl font-title text-white text-lg flex items-center gap-2">
+            <i class="fa-solid fa-print"></i>
+            <span>인쇄 / 저장하기</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 4. 초기화 확인 모달 (alert/confirm 대체) ==================== -->
+  <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 border-4 border-rose-300 shadow-2xl text-center space-y-4">
+      <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 mx-auto flex items-center justify-center text-3xl">
+        <i class="fa-solid fa-rotate-right"></i>
+      </div>
+      <h3 class="font-title text-2xl text-slate-800">여행 기록을 처음부터 다시 할까요?</h3>
+      <p class="text-sm text-slate-600">
+        지금까지 모은 스탬프와 미션 기록이 초기화되고, 루미가 <strong>1차시 화석정</strong>으로 돌아갑니다.
+      </p>
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button onclick="closeResetModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-slate-700">
+          취소
+        </button>
+        <button onclick="confirmResetProgress()" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 font-title text-white shadow">
+          네, 처음부터 할래요!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 알림창 -->
+  <div id="toastMessage" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform translate-y-4">
+    <div class="bg-slate-900/95 text-white font-title px-5 py-3 rounded-2xl shadow-xl border-2 border-sky-400 flex items-center gap-2.5 text-sm sm:text-base">
+      <span id="toastIcon">✨</span>
+      <span id="toastText">알림 메시지</span>
+    </div>
+  </div>
+
+  <!-- ==================== 스크립트 로직 ==================== -->
+  <script>
+    /*************************************************************************
+     * 1. 캐릭터 '루미' 고퀄리티 SVG 폴백 생성기
+     * - 코드 내 모든 캐릭터 이미지는 src="./character.png"를 기본으로 사용합니다.
+     * - 만약 로컬 폴더에 ./character.png 파일이 없더라도, 첨부된 원본 캐릭터
+     *   (빨간 정수리 포인트가 있는 하얀 두루미, 파란 헤드셋과 파란 안테나,
+     *    흰 줄무늬가 들어간 파란 트레이닝복과 운동화)와 동일한 디자인의
+     *   고해상도 SVG Data URI로 즉시 대체됩니다.
+     *************************************************************************/
+    const LUMI_SVG_RAW = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 300" width="260" height="300">
+      <defs>
+        <radialGradient id="headGrad" cx="45%" cy="38%" r="58%">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="82%" stop-color="#F1F5F9"/>
+          <stop offset="100%" stop-color="#CBD5E1"/>
+        </radialGradient>
+        <linearGradient id="suitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#38BDF8"/>
+          <stop offset="55%" stop-color="#2563EB"/>
+          <stop offset="100%" stop-color="#1D4ED8"/>
+        </linearGradient>
+        <radialGradient id="orbGrad" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#E0F2FE"/>
+          <stop offset="45%" stop-color="#38BDF8"/>
+          <stop offset="100%" stop-color="#0284C7"/>
+        </radialGradient>
+      </defs>
+
+      <!-- 머리 위 파란 AI 안테나 -->
+      <line x1="95" y1="45" x2="82" y2="20" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="80" cy="16" r="12" fill="url(#orbGrad)" stroke="#BAE6FD" stroke-width="2"/>
+      <circle cx="76" cy="12" r="4" fill="#FFFFFF" opacity="0.9"/>
+
+      <!-- 왼쪽 날개 (아래로 뻗은 날개와 검은 깃털 끝) -->
+      <g transform="translate(0, 5)">
+        <path d="M78,168 C45,180 26,205 18,225 C28,232 42,226 48,220 C42,232 52,238 62,230 C62,240 74,240 80,228 L98,195 Z" fill="#1E293B"/>
+        <path d="M84,166 C58,176 40,196 34,212 C46,216 58,210 64,204 C62,216 72,218 78,208 L96,184 Z" fill="#F8FAFC"/>
+      </g>
+
+      <!-- 오른쪽 날개 (반갑게 손 흔드는 날개) -->
+      <g>
+        <path d="M172,145 C195,112 215,92 226,95 C235,98 228,116 218,125 C232,118 242,126 232,140 C244,138 246,150 232,160 C240,164 236,176 222,178 C225,186 216,194 202,190 L168,182 Z" fill="#1E293B"/>
+        <path d="M168,150 C186,125 202,112 210,115 C215,118 208,132 200,138 C212,134 218,142 208,152 C218,152 218,162 206,168 C212,172 206,182 195,182 L166,176 Z" fill="#FFFFFF"/>
+      </g>
+
+      <!-- 다리 & 파란 트레이닝 바지 -->
+      <path d="M100,210 L92,254 L118,256 L125,218 L135,218 L140,256 L166,254 L158,210 Z" fill="url(#suitGrad)" stroke="#1E3A8A" stroke-width="2"/>
+      <!-- 바지 옆 흰 줄무늬 -->
+      <line x1="98" y1="214" x2="93" y2="248" stroke="#FFFFFF" stroke-width="3.5"/>
+      <line x1="104" y1="214" x2="99" y2="248" stroke="#FFFFFF" stroke-width="3.5"/>
+      <line x1="160" y1="214" x2="165" y2="248" stroke="#FFFFFF" stroke-width="3.5"/>
+      <line x1="154" y1="214" x2="159" y2="248" stroke="#FFFFFF" stroke-width="3.5"/>
+      <!-- 바지 시보리(발목) -->
+      <rect x="91" y="248" width="27" height="8" rx="3" fill="#1E3A8A"/>
+      <rect x="140" y="248" width="27" height="8" rx="3" fill="#1E3A8A"/>
+
+      <!-- 파란색 & 흰색 운동화 -->
+      <g>
+        <path d="M82,276 C82,260 95,254 114,255 C122,256 124,268 122,278 L82,278 Z" fill="#38BDF8" stroke="#1E3A8A" stroke-width="2"/>
+        <path d="M80,275 L124,275 C126,275 126,284 120,284 L82,284 C77,284 77,275 80,275 Z" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.5"/>
+        <line x1="94" y1="262" x2="108" y2="262" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+        <line x1="92" y1="268" x2="106" y2="268" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+
+        <path d="M136,278 C134,268 136,256 144,255 C163,254 178,260 178,276 L136,278 Z" fill="#38BDF8" stroke="#1E3A8A" stroke-width="2"/>
+        <path d="M134,275 L180,275 C183,275 183,284 178,284 L138,284 C132,284 132,275 134,275 Z" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.5"/>
+        <line x1="150" y1="262" x2="164" y2="262" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+        <line x1="152" y1="268" x2="166" y2="268" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+      </g>
+
+      <!-- 목 (두루미 특유의 흰 목과 검은 무늬) -->
+      <path d="M112,118 L112,148 L144,148 L144,118 Z" fill="#F8FAFC"/>
+      <path d="M112,122 C118,132 122,140 122,148 L112,148 Z" fill="#1E293B"/>
+
+      <!-- 파란색 트레이닝복 상의 자켓 -->
+      <path d="M88,146 C96,140 160,140 168,146 L176,162 L162,212 L94,212 L80,162 Z" fill="url(#suitGrad)" stroke="#1E3A8A" stroke-width="2.2"/>
+      <!-- 소매 (왼팔/오른팔) -->
+      <path d="M88,148 L60,178 L78,192 L98,168 Z" fill="url(#suitGrad)" stroke="#1E3A8A" stroke-width="2"/>
+      <path d="M168,148 L194,132 L180,115 L156,144 Z" fill="url(#suitGrad)" stroke="#1E3A8A" stroke-width="2"/>
+      <!-- 소매 흰색 2줄 스트라이프 -->
+      <line x1="83" y1="154" x2="65" y2="174" stroke="#FFFFFF" stroke-width="3"/>
+      <line x1="88" y1="158" x2="70" y2="178" stroke="#FFFFFF" stroke-width="3"/>
+      <!-- 자켓 카라 & 지퍼 & 허리 시보리 -->
+      <path d="M106,140 L128,156 L150,140" fill="none" stroke="#1E3A8A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="128" y1="154" x2="128" y2="212" stroke="#FFFFFF" stroke-width="4"/>
+      <rect x="93" y="205" width="70" height="9" rx="4" fill="#1E3A8A"/>
+      <!-- 가슴 로고 배지 -->
+      <circle cx="148" cy="174" r="9" fill="#38BDF8" stroke="#FFFFFF" stroke-width="2"/>
+      <path d="M144,174 L148,170 L152,174 L148,178 Z" fill="#FFFFFF"/>
+
+      <!-- 헤드셋 밴드 -->
+      <path d="M62,92 C58,42 198,42 194,92" fill="none" stroke="#2563EB" stroke-width="9" stroke-linecap="round"/>
+
+      <!-- 귀마개 (양쪽 네온 블루 헤드셋) -->
+      <g transform="rotate(-10 62 96)">
+        <ellipse cx="62" cy="96" rx="12" ry="22" fill="#1E293B" stroke="#38BDF8" stroke-width="3"/>
+        <ellipse cx="60" cy="96" rx="6" ry="14" fill="none" stroke="#38BDF8" stroke-width="3"/>
+      </g>
+      <g transform="rotate(10 194 92)">
+        <ellipse cx="194" cy="92" rx="12" ry="22" fill="#1E293B" stroke="#38BDF8" stroke-width="3"/>
+        <ellipse cx="196" cy="92" rx="6" ry="14" fill="none" stroke="#38BDF8" stroke-width="3"/>
+      </g>
+
+      <!-- 얼굴 (귀여운 둥근 하얀 두루미 머리) -->
+      <ellipse cx="128" cy="88" rx="62" ry="52" fill="url(#headGrad)" stroke="#E2E8F0" stroke-width="1.5"/>
+
+      <!-- 두루미 정수리 빨간 포인트 (단정학 왕관) -->
+      <path d="M98,44 C112,35 142,35 154,44 C148,58 108,58 98,44 Z" fill="#EF4444"/>
+
+      <!-- 볼터치 -->
+      <ellipse cx="82" cy="98" rx="11" ry="6.5" fill="#FDA4AF" opacity="0.65"/>
+      <ellipse cx="174" cy="94" rx="11" ry="6.5" fill="#FDA4AF" opacity="0.65"/>
+
+      <!-- 귀여운 눈썹 -->
+      <path d="M88,62 Q98,56 106,61" fill="none" stroke="#334155" stroke-width="3" stroke-linecap="round"/>
+      <path d="M148,59 Q156,54 166,60" fill="none" stroke="#334155" stroke-width="3" stroke-linecap="round"/>
+
+      <!-- 반짝이는 큰 눈 -->
+      <g>
+        <circle cx="98" cy="82" r="14" fill="#1E1B18"/>
+        <circle cx="93" cy="76" r="5" fill="#FFFFFF"/>
+        <circle cx="104" cy="87" r="2.5" fill="#FFFFFF"/>
+
+        <circle cx="158" cy="80" r="14" fill="#1E1B18"/>
+        <circle cx="153" cy="74" r="5" fill="#FFFFFF"/>
+        <circle cx="164" cy="85" r="2.5" fill="#FFFFFF"/>
+      </g>
+
+      <!-- 활짝 웃는 부리 -->
+      <path d="M110,88 Q128,76 146,87 L128,99 Z" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+      <path d="M115,90 L128,112 L141,89 Z" fill="#7F1D1D"/>
+      <path d="M120,97 Q128,93 136,97 L128,110 Z" fill="#FB7185"/>
+      <path d="M112,88 Q128,97 144,87" fill="none" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`;
+
+    const LUMI_FALLBACK_DATA_URL = 'data:image/svg+xml;utf8,' + encodeURIComponent(LUMI_SVG_RAW);
+
+    function handleLumiImageError(imgEl) {
+      if (imgEl.dataset.fallbackApplied === 'true') return;
+      imgEl.dataset.fallbackApplied = 'true';
+      imgEl.src = LUMI_FALLBACK_DATA_URL;
+    }
+
+    /*************************************************************************
+     * 2. 파주 6개 명소 & 12차시 교육과정 데이터 (엑셀 데이터 기반 하드코딩)
+     *************************************************************************/
+    const LANDMARKS_DATA = [
+      {
+        id: 1,
+        name: '화석정',
+        subtitle: '율곡 이이의 지혜가 깃든 정자',
+        badgeColor: 'from-amber-400 to-orange-500',
+        borderColor: 'border-amber-300',
+        bgSoft: 'bg-amber-50/90',
+        sessions: [1, 2],
+        funFact: '율곡 이이 선생님이 제자들과 학문을 나누며 임진강을 바라보던 아름다운 정자예요!'
+      },
+      {
+        id: 2,
+        name: '용미리 마애이불입상',
+        subtitle: '천 년을 지켜온 바위 위 두 불상',
+        badgeColor: 'from-stone-500 to-amber-700',
+        borderColor: 'border-stone-300',
+        bgSoft: 'bg-stone-50/90',
+        sessions: [3, 4],
+        funFact: '거대한 천연 바위 위에 둥근 모자와 네모난 모자를 쓴 두 분의 불상이 나란히 새겨져 있어요!'
+      },
+      {
+        id: 3,
+        name: '헤이리마을',
+        subtitle: '자연과 예술이 숨 쉬는 문화 마을',
+        badgeColor: 'from-pink-400 to-rose-500',
+        borderColor: 'border-pink-300',
+        bgSoft: 'bg-pink-50/90',
+        sessions: [5, 6],
+        funFact: '화가, 음악가, 건축가들이 모여 자연과 어울리는 멋진 미술관과 박물관을 만든 예술 마을이에요!'
+      },
+      {
+        id: 4,
+        name: '파주출판도시',
+        subtitle: '책과 지혜의 숲이 펼쳐진 도시',
+        badgeColor: 'from-indigo-400 to-blue-600',
+        borderColor: 'border-indigo-300',
+        bgSoft: 'bg-indigo-50/90',
+        sessions: [7, 8],
+        funFact: '우리가 읽는 수많은 동화책과 그림책이 기획되고 인쇄되어 세상으로 나오는 책들의 고향이에요!'
+      },
+      {
+        id: 5,
+        name: '임진강',
+        subtitle: '평화의 물결과 생명이 흐르는 강',
+        badgeColor: 'from-sky-400 to-cyan-600',
+        borderColor: 'border-sky-300',
+        bgSoft: 'bg-sky-50/90',
+        sessions: [9, 10],
+        funFact: '황포돛배가 물살을 가르고 겨울이면 나 루미의 친구인 두루미들이 찾아오는 아름다운 강이에요!'
+      },
+      {
+        id: 6,
+        name: '평화누리공원',
+        subtitle: '수천 개의 바람개비가 도는 언덕',
+        badgeColor: 'from-emerald-400 to-teal-600',
+        borderColor: 'border-emerald-300',
+        bgSoft: 'bg-emerald-50/90',
+        sessions: [11, 12],
+        funFact: '넓은 잔디밭과 바람의 언덕 위에서 형형색색의 바람개비가 평화의 바람을 타고 빙글빙글 돌아가요!'
+      }
+    ];
+
+    const SESSIONS_DATA = [
+      {
+        session: 1,
+        landmarkId: 1,
+        landmarkName: '화석정',
+        category: '🏃 체육 AI 챌린지',
+        title: '평화누리길 랜선 여행 출발 준비 (체력 목표 세우기)',
+        lumiQuote: '안녕 친구들! 파주 랜선 여행의 첫 출발지인 화석정에 도착했어! 12차시까지 끝까지 완주하려면 튼튼한 체력이 필요해. 우리 함께 체력 목표를 세우고 준비 체조를 시작해 볼까?',
+        activities: [
+          '파주 화석정과 평화누리길 6대 명소 여행 코스 살펴보기',
+          '나의 현재 체력을 점검하고 12차시 완주 체력 목표 세우기',
+          'AI 루미와 함께 관절을 깨우는 신나는 출발 준비 체조하기'
+        ],
+        widgetType: 'fitness',
+        widgetGoal: 10,
+        widgetActionName: '출발 준비 점프 & 스트레칭',
+        widgetUnit: '회',
+        promptLabel: '✏️ 나의 파주 랜선 여행 체력 다짐 적기',
+        quickChips: [
+          '12차시까지 매일 즐겁게 운동하며 완주할 거예요!',
+          '하루에 줄넘기 50개씩 해서 체력을 기를래요!',
+          '루미와 함께 바른 자세로 체조에 참여할게요!'
+        ]
+      },
+      {
+        session: 2,
+        landmarkId: 1,
+        landmarkName: '화석정',
+        category: '🎨 창의·융합 탐구',
+        title: '화석정 기름칠의 비밀 (이야기책 결말 짓기)',
+        lumiQuote: '율곡 이이 선생님은 왜 화석정 기둥마다 들기름을 정성껏 바르라고 하셨을까? 역사 속 비밀을 알아보고, 내가 작가가 되어 이야기책의 새로운 결말을 상상해 보자!',
+        activities: [
+          '율곡 이이 선생님과 화석정 기름칠에 담긴 역사 이야기 알아보기',
+          '어두운 밤길 임진강을 건너던 사람들을 도운 지혜 탐구하기',
+          'AI와 함께 내가 상상한 화석정 이야기책의 새로운 결말 짓기'
+        ],
+        widgetType: 'creative_choice',
+        widgetQuestion: '💡 만약 내가 화석정을 지키는 AI 발명가라면 어떤 방법으로 밤길을 밝혔을까요?',
+        widgetChoices: [
+          '☀️ 낮에 햇빛을 모아 밤에 반짝이는 태양광 초롱불 설치하기',
+          '🕊️ 반딧불이 로봇 드론을 띄워 강가 길을 안전하게 안내하기',
+          '🎵 발걸음 소리에 맞춰 빛나는 무지개 징검다리 만들기'
+        ],
+        promptLabel: '✏️ 내가 지은 화석정 이야기책의 멋진 결말 한 줄!',
+        quickChips: [
+          '화석정의 따뜻한 불빛 덕분에 모두가 안전하게 강을 건넜답니다!',
+          '율곡 선생님의 지혜가 오늘날 AI 등대로 다시 태어났어요!',
+          '기름칠한 기둥이 별빛처럼 반짝이며 평화의 길을 비추었어요!'
+        ]
+      },
+      {
+        session: 3,
+        landmarkId: 2,
+        landmarkName: '용미리 마애이불입상',
+        category: '🏃 체육 AI 챌린지',
+        title: '올바른 자세를 찾아라! (AI 스쿼트 챌린지)',
+        lumiQuote: '천 년 동안 비바람에도 흔들리지 않고 바위에 우뚝 서 계신 용미리 마애이불입상처럼, 우리도 튼튼한 하체와 바른 자세를 만드는 AI 스쿼트 챌린지에 도전해 볼까?',
+        activities: [
+          '바위에 우뚝 선 용미리 마애이불입상의 굳건한 자세 관찰하기',
+          'AI 동작 인식으로 무릎과 허리를 지키는 바른 스쿼트 자세 배우기',
+          '목표 횟수만큼 흔들림 없이 AI 스쿼트 챌린지 완주하기'
+        ],
+        widgetType: 'fitness',
+        widgetGoal: 12,
+        widgetActionName: '바위처럼 튼튼 AI 스쿼트',
+        widgetUnit: '회',
+        promptLabel: '✏️ 바른 자세 스쿼트 챌린지 성공 소감 적기',
+        quickChips: [
+          '무릎이 발끝을 넘지 않게 바른 자세로 스쿼트 12회 성공!',
+          '허벅지가 조금 떨렸지만 불상처럼 굳건하게 버텼어요!',
+          '바른 자세로 운동하니까 다리에 힘이 쑥쑥 생기는 기분이에요!'
+        ]
+      },
+      {
+        session: 4,
+        landmarkId: 2,
+        landmarkName: '용미리 마애이불입상',
+        category: '🎨 창의·융합 탐구',
+        title: '용미리 바위에 새긴 두 분 (작품 제목 짓기)',
+        lumiQuote: '둥근 모자와 네모난 모자를 나란히 쓰고 천 년 동안 파주를 지켜온 두 불상! 두 분은 서로 무슨 이야기를 나누고 계실까? 멋진 작품 제목을 지어 드려 보자!',
+        activities: [
+          '둥근 모자와 네모난 모자를 쓴 두 불상의 특징과 전설 알아보기',
+          '천 년 동안 파주 마을과 사람들을 지켜온 두 분의 마음 상상하기',
+          '나만의 창의적인 시각으로 새로운 작품 제목과 소개글 짓기'
+        ],
+        widgetType: 'creative_choice',
+        widgetQuestion: '🗿 두 분의 불상에게 어울리는 나만의 별명(테마)을 골라 볼까요?',
+        widgetChoices: [
+          '🤝 천 년 동안 변치 않는 단짝 친구 바위 수호신',
+          '🌕 둥근 달님과 네모 별님이 만나는 소원 바위',
+          '🛡️ 파주의 평화와 건강을 지켜주는 든든한 두 거인'
+        ],
+        promptLabel: '✏️ 내가 지은 용미리 마애이불입상의 새로운 작품 제목!',
+        quickChips: [
+          '《천 년의 우정, 바위 위에서 미소 짓는 두 수호신》',
+          '《둥근 마음 네모난 지혜로 파주를 지키는 두 분》',
+          '《소원을 들어주는 용미리 쌍둥이 바위 할아버지·할머니》'
+        ]
+      },
+      {
+        session: 5,
+        landmarkId: 3,
+        landmarkName: '헤이리마을',
+        category: '🏃 체육 AI 챌린지',
+        title: '잃어버린 체력을 찾아라! (심폐지구력 서킷 챌린지)',
+        lumiQuote: '넓고 아름다운 예술 마을 헤이리를 구석구석 신나게 탐험하려면 지치지 않는 심폐지구력이 필수야! 리듬에 맞춰 심장이 콩콩 뛰는 서킷 챌린지를 시작하자!',
+        activities: [
+          '예술 마을 헤이리를 탐험하기 위한 심폐지구력의 중요성 알아보기',
+          '신나는 리듬에 맞춰 점핑잭·무릎 높이 들기 서킷 운동하기',
+          '운동 전후 나의 심장 박동 변화를 느끼며 호흡 정리하기'
+        ],
+        widgetType: 'fitness',
+        widgetGoal: 15,
+        widgetActionName: '심장 튼튼 점핑잭 서킷',
+        widgetUnit: '회',
+        promptLabel: '✏️ 서킷 운동 후 내 몸의 변화와 기분 적기',
+        quickChips: [
+          '심장이 콩콩 힘차게 뛰고 온몸에 활력이 넘쳐요!',
+          '숨이 찼지만 끝까지 포기하지 않고 서킷 챌린지 완주!',
+          '친구들과 리듬에 맞춰 뛰니까 힘들지 않고 정말 신났어요!'
+        ]
+      },
+      {
+        session: 6,
+        landmarkId: 3,
+        landmarkName: '헤이리마을',
+        category: '🎨 창의·융합 탐구',
+        title: '헤이리에 나만의 상상 미술관 짓기',
+        lumiQuote: '헤이리마을에는 자연과 어울리는 신기한 미술관이 가득해! 만약 너희가 헤이리에 세상에 하나뿐인 나만의 미술관을 짓는다면 어떤 미술관을 만들고 싶니?',
+        activities: [
+          '자연과 조화를 이루는 헤이리마을의 독특한 건축과 미술관 구경하기',
+          '내가 만들고 싶은 세상에 하나뿐인 상상 미술관의 주제 정하기',
+          'AI 그리기 도구를 활용해 나만의 상상 미술관 멋지게 완성하기'
+        ],
+        widgetType: 'creative_choice',
+        widgetQuestion: '🎨 내가 헤이리에 짓고 싶은 상상 미술관의 테마를 선택해 보세요!',
+        widgetChoices: [
+          '🌈 구름 위를 걸으며 그림을 감상하는 무지개 구름 미술관',
+          '🍫 달콤한 초콜릿과 과자로 만든 동화 속 디저트 미술관',
+          '🦕 공룡과 우주가 살아 움직이는 홀로그램 미래 미술관'
+        ],
+        promptLabel: '✏️ 내가 지은 상상 미술관의 이름과 자랑거리 적기',
+        quickChips: [
+          '《구름 퐁퐁 미술관》 - 트램펄린을 뛰며 천장 그림을 볼 수 있어요!',
+          '《숲속 소리 미술관》 - 나무와 새소리가 그림으로 변하는 곳이에요!',
+          '《AI 무지개 미술관》 - 관람객의 기분에 따라 건물 색깔이 바뀌어요!'
+        ]
+      },
+      {
+        session: 7,
+        landmarkId: 4,
+        landmarkName: '파주출판도시',
+        category: '🏃 체육 AI 챌린지',
+        title: '출판단지 그림책 여행 (동물 체조 만들기)',
+        lumiQuote: '수많은 책들이 태어나는 파주출판도시에 왔어! 그림책 속에서 막 튀어나온 귀여운 동물 친구들의 움직임을 따라 하며 우리 반만의 동물 건강 체조를 만들어 보자!',
+        activities: [
+          '책들이 태어나는 파주출판도시와 그림책 속 다양한 동물 만나기',
+          '기린, 두루미, 캥거루 등 동물의 특징을 살린 스트레칭 동작 만들기',
+          '친구들과 함께 우리가 만든 동물 건강 체조 신나게 따라 하기'
+        ],
+        widgetType: 'fitness',
+        widgetGoal: 10,
+        widgetActionName: '그림책 동물 스트레칭 체조',
+        widgetUnit: '동작',
+        promptLabel: '✏️ 내가 만든 동물 체조 동작 이름 소개하기',
+        quickChips: [
+          '두루미 한 발 균형 잡기 동작으로 몸의 중심을 잡았어요!',
+          '기린처럼 목과 팔을 하늘 높이 쭉 뻗는 기지개 체조예요!',
+          '통통 튀는 캥거루 점프 동작으로 다리 힘을 길렀어요!'
+        ]
+      },
+      {
+        session: 8,
+        landmarkId: 4,
+        landmarkName: '파주출판도시',
+        category: '🎨 창의·융합 탐구',
+        title: '출판도시 책벌레 똑똑이 인터뷰하기',
+        lumiQuote: '파주출판도시 지혜의 숲 도서관에는 세상 모든 책 이야기를 아는 AI 챗봇 "책벌레 똑똑이"가 살고 있대! 일일 기자가 되어 똑똑이를 인터뷰해 볼까?',
+        activities: [
+          '지혜의 숲에 사는 AI 챗봇 친구 "책벌레 똑똑이" 만나기',
+          '책이 만들어지는 과정과 평소 궁금했던 질문 리스트 만들기',
+          '똑똑이와 재미있는 인터뷰 대화를 나누고 한 줄 기사 완성하기'
+        ],
+        widgetType: 'interview_sim',
+        promptLabel: '✏️ 책벌레 똑똑이에게 건넨 나의 최고의 질문 또는 기사 제목!',
+        quickChips: [
+          '똑똑이야, 세상에 있는 책 중에서 네가 제일 좋아하는 책은 뭐니?',
+          '재미있는 그림책 한 권이 만들어지려면 몇 명의 힘이 필요한가요?',
+          '[특종] 파주출판도시 책벌레 똑똑이, 독서의 비결을 밝히다!'
+        ]
+      },
+      {
+        session: 9,
+        landmarkId: 5,
+        landmarkName: '임진강',
+        category: '🏃 체육 AI 챌린지',
+        title: '거센 물살을 헤쳐라! (뱃사공 푸쉬업 챌린지)',
+        lumiQuote: '시원하게 펼쳐진 임진강에 도착했어! 옛날 황포돛배 뱃사공들이 힘차게 노를 저어 거센 물살을 건넜던 것처럼, 우리도 상체와 코어 힘을 기르는 푸쉬업에 도전하자!',
+        activities: [
+          '임진강 물길을 힘차게 건너던 황포돛배와 뱃사공 이야기 듣기',
+          '내 수준에 맞는 단계별(벽 짚기·무릎 대고·기본) 푸쉬업 자세 익히기',
+          '거센 물살을 헤치는 "뱃사공 푸쉬업 챌린지" 힘차게 성공하기'
+        ],
+        widgetType: 'fitness',
+        widgetGoal: 10,
+        widgetActionName: '뱃사공 파워 푸쉬업',
+        widgetUnit: '회',
+        promptLabel: '✏️ 거센 물살을 이겨낸 뱃사공 푸쉬업 성공 소감!',
+        quickChips: [
+          '무릎 대고 푸쉬업 10개를 끝까지 해내서 팔 근육이 단단해졌어요!',
+          '영차영차 구호를 외치며 하니까 진짜 황포돛배 뱃사공이 된 것 같아요!',
+          '몸을 일직선으로 유지하며 바른 자세로 푸쉬업에 성공했어요!'
+        ]
+      },
+      {
+        session: 10,
+        landmarkId: 5,
+        landmarkName: '임진강',
+        category: '🎨 창의·융합 탐구',
+        title: '임진강 소리 합주단 (소리 악보 만들기)',
+        lumiQuote: '귀를 기울여 봐! 임진강의 잔잔한 물결 소리, 사각거리는 갈대 바람 소리, 그리고 두루미의 힘찬 날갯짓 소리가 들리지? 자연의 소리로 멋진 악보를 만들어 연주해 보자!',
+        activities: [
+          '임진강 물결, 갈대 바람, 두루미 날갯짓 등 자연의 소리 감상하기',
+          '자연의 소리를 재미있는 기호와 아이콘으로 표현한 소리 악보 만들기',
+          '친구들과 함께 아름다운 "임진강 평화 소리 합주" 연주하기'
+        ],
+        widgetType: 'sound_composer',
+        promptLabel: '✏️ 우리 반이 연주한 임진강 소리 악보의 곡 제목 짓기',
+        quickChips: [
+          '《찰랑찰랑 임진강 물결과 두루미의 평화 왈츠》',
+          '《갈대 바람이 노래하는 아름다운 파주의 아침》',
+          '《루미와 친구들이 함께 만든 임진강 자연 교향곡》'
+        ]
+      },
+      {
+        session: 11,
+        landmarkId: 6,
+        landmarkName: '평화누리공원',
+        category: '🏃 체육 AI 챌린지',
+        title: '네 날개 건강 바람개비! (우리 반 틈새 운동)',
+        lumiQuote: '드디어 마지막 여행지인 평화누리공원이야! 언덕 위에서 빙글빙글 도는 네 날개 바람개비처럼, 아침·쉬는 시간·점심·방과 후에 실천할 우리 반 틈새 운동을 만들어 돌려 보자!',
+        activities: [
+          '평화누리공원 바람의 언덕과 알록달록 바람개비 풍경 만나기',
+          '바람개비 네 날개에 아침·쉬는 시간·점심·방과 후 틈새 운동 정하기',
+          '건강 바람개비를 신나게 돌리며 친구들과 틈새 운동 실천하기'
+        ],
+        widgetType: 'pinwheel_roulette',
+        promptLabel: '✏️ 내가 매일 실천할 건강 바람개비 틈새 운동 약속!',
+        quickChips: [
+          '쉬는 시간마다 친구들과 기지개 켜고 제자리 높이뛰기 10번 하기!',
+          '점심 먹고 운동장 산책하며 햇살 비타민 충전하기!',
+          '아침 시간마다 어깨 돌리기와 목 스트레칭으로 상쾌하게 시작하기!'
+        ]
+      },
+      {
+        session: 12,
+        landmarkId: 6,
+        landmarkName: '평화누리공원',
+        category: '🎨 창의·융합 탐구',
+        title: '바람의 언덕에 마음 한마디 달기 (바람 시화 꾸미기)',
+        lumiQuote: '우와, 정말 대단해! 1차시 화석정부터 12차시 평화누리공원까지 모든 여행을 함께해 줘서 고마워! 바람의 언덕에 너희의 따뜻한 마음을 담은 바람개비 시화를 달고 여행을 완주하자!',
+        activities: [
+          '12차시 파주 랜선 여행을 돌아보며 몸과 마음이 성장한 나 칭찬하기',
+          '평화와 건강, 소중한 친구를 향한 따뜻한 마음을 담아 짧은 시 쓰기',
+          '나만의 "바람개비 시화"를 꾸며 바람의 언덕에 달고 파주 여행 완주하기!'
+        ],
+        widgetType: 'creative_choice',
+        widgetQuestion: '🎐 바람의 언덕에 달 나의 바람개비 시화 색깔과 소원을 골라 보세요!',
+        widgetChoices: [
+          '💙 하늘빛 바람개비 - 온 세상에 평화와 웃음이 가득하길!',
+          '💛 햇살빛 바람개비 - 우리 반 친구들 모두 일 년 내내 건강하길!',
+          '💚 초록빛 바람개비 - 파주의 아름다운 자연이 영원히 푸르길!'
+        ],
+        promptLabel: '✏️ 바람의 언덕에 남기는 나의 평화·건강 한마디 (시 구절)',
+        quickChips: [
+          '빙글빙글 바람개비야, 우리 반의 건강한 웃음을 온 세상에 전해 줘!',
+          '루미와 함께 달린 파주 AI-ROAD, 내 마음도 체력도 한 뼘 더 자랐어요!',
+          '임진강 바람 타고 평화의 노래가 멀리멀리 퍼져 나가길 소망해요!'
+        ]
+      }
+    ];
+
+    /*************************************************************************
+     * 3. 앱 상태 관리 (LocalStorage 연동으로 새로고침 후에도 유지)
+     *************************************************************************/
+    const STORAGE_KEY = 'PAJU_AI_ROAD_LUMI_STATE_V1';
+
+    let appState = {
+      currentSession: 1, // 루미가 현재 서 있는 차시 (1~12)
+      completedSessions: [], // 완료된 차시 번호 배열 [1, 2, ...]
+      missionNotes: {}, // 차시별 학생이 작성한 한 줄 기록 { 1: "열심히 운동할게요!" }
+      checkedActivities: {}, // 차시별 체크리스트 상태 { 1: [true, true, false] }
+      teacherMode: false, // 선생님 자유 이동 모드
+      soundEnabled: true
+    };
+
+    let activeModalSession = 1; // 현재 열려 있는 모달의 차시 번호
+    let currentWidgetCount = 0; // 피트니스 카운터 위젯 상태
+    let isLumiMoving = false;
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          appState = { ...appState, ...parsed };
+        }
+      } catch (e) {
+        console.warn('저장된 상태를 불러오지 못했습니다:', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.warn('상태 저장 실패:', e);
+      }
+    }
+
+    /*************************************************************************
+     * 4. Web Audio API 효과음 합성기 (외부 오디오 파일 없이 즉각 작동)
+     *************************************************************************/
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.15, delay = 0, gainVal = 0.15) {
+      if (!appState.soundEnabled) return;
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+
+      gain.gain.setValueAtTime(0.001, ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(gainVal, ctx.currentTime + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + duration);
+    }
+
+    function playPopSound() {
+      playTone(520, 'triangle', 0.09, 0, 0.14);
+      playTone(780, 'sine', 0.11, 0.05, 0.12);
+    }
+
+    function playHopSound() {
+      playTone(380, 'sine', 0.12, 0, 0.15);
+      playTone(580, 'triangle', 0.14, 0.06, 0.15);
+    }
+
+    function playFanfareSound() {
+      // 도-미-솔-도! 경쾌한 팡파레
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((n, idx) => {
+        const dur = idx === notes.length - 1 ? 0.42 : 0.14;
+        playTone(n, 'triangle', dur, idx * 0.11, 0.18);
+      });
+    }
+
+    function toggleSound() {
+      appState.soundEnabled = !appState.soundEnabled;
+      saveState();
+      updateSoundButtons();
+      if (appState.soundEnabled) {
+        playPopSound();
+        showToast('🔊 효과음이 켜졌어요!');
+      } else {
+        showToast('🔇 효과음이 꺼졌어요.');
+      }
+    }
+
+    function updateSoundButtons() {
+      const iconClass = appState.soundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+      const btnD = document.getElementById('soundBtnDesktop');
+      const btnM = document.getElementById('soundBtnMobile');
+      if (btnD) btnD.innerHTML = `<i class="${iconClass}"></i>`;
+      if (btnM) btnM.innerHTML = `<i class="${iconClass} text-lg"></i>`;
+    }
+
+    /*************************************************************************
+     * 5. 명소별 커스텀 일러스트 아이콘 SVG 반환
+     *************************************************************************/
+    function getLandmarkIllustration(landmarkId) {
+      switch (landmarkId) {
+        case 1: // 화석정 (전통 한옥 정자)
+          return `<svg viewBox="0 0 80 70" class="w-16 h-14 flex-shrink-0 drop-shadow">
+            <path d="M8,32 Q40,8 72,32 L64,36 Q40,18 16,36 Z" fill="#1E293B"/>
+            <path d="M14,28 Q40,12 66,28 Z" fill="#334155"/>
+            <rect x="20" y="34" width="40" height="6" rx="2" fill="#D97706"/>
+            <line x1="24" y1="40" x2="24" y2="58" stroke="#B45309" stroke-width="5" stroke-linecap="round"/>
+            <line x1="40" y1="40" x2="40" y2="58" stroke="#B45309" stroke-width="5" stroke-linecap="round"/>
+            <line x1="56" y1="40" x2="56" y2="58" stroke="#B45309" stroke-width="5" stroke-linecap="round"/>
+            <rect x="14" y="56" width="52" height="8" rx="3" fill="#78716C"/>
+            <circle cx="65" cy="15" r="6" fill="#FACC15"/>
+          </svg>`;
+        case 2: // 용미리 마애이불입상 (둥근 모자 & 네모 모자 두 불상)
+          return `<svg viewBox="0 0 80 70" class="w-16 h-14 flex-shrink-0 drop-shadow">
+            <path d="M12,62 L18,22 Q28,12 38,22 L42,62 Z" fill="#A8A29E" stroke="#78716C" stroke-width="2"/>
+            <path d="M40,62 L44,24 Q54,14 64,24 L68,62 Z" fill="#D6D3D1" stroke="#78716C" stroke-width="2"/>
+            <!-- 둥근 갓 & 네모 갓 -->
+            <ellipse cx="28" cy="18" rx="11" ry="5" fill="#57534E"/>
+            <rect x="44" y="13" width="20" height="7" rx="2" fill="#57534E"/>
+            <!-- 인자한 얼굴 -->
+            <circle cx="28" cy="29" r="7" fill="#F5F5F4"/>
+            <circle cx="54" cy="30" r="7" fill="#F5F5F4"/>
+            <path d="M25,31 Q28,34 31,31" fill="none" stroke="#44403C" stroke-width="1.5"/>
+            <path d="M51,32 Q54,35 57,32" fill="none" stroke="#44403C" stroke-width="1.5"/>
+          </svg>`;
+        case 3: // 헤이리마을 (예술 미술관과 팔레트)
+          return `<svg viewBox="0 0 80 70" class="w-16 h-14 flex-shrink-0 drop-shadow">
+            <rect x="14" y="26" width="34" height="34" rx="6" fill="#F43F5E"/>
+            <polygon points="10,28 31,10 52,28" fill="#FB7185"/>
+            <rect x="24" y="38" width="14" height="22" rx="3" fill="#FFF1F2"/>
+            <circle cx="56" cy="44" r="15" fill="#FDE047" stroke="#F59E0B" stroke-width="2"/>
+            <circle cx="51" cy="38" r="3" fill="#EF4444"/>
+            <circle cx="60" cy="38" r="3" fill="#3B82F6"/>
+            <circle cx="62" cy="47" r="3" fill="#10B981"/>
+            <circle cx="52" cy="50" r="3.5" fill="#FFFFFF"/>
+          </svg>`;
+        case 4: // 파주출판도시 (펼쳐진 책과 지혜의 숲)
+          return `<svg viewBox="0 0 80 70" class="w-16 h-14 flex-shrink-0 drop-shadow">
+            <path d="M12,22 Q26,18 40,26 Q54,18 68,22 L68,56 Q54,50 40,58 Q26,50 12,56 Z" fill="#3B82F6" stroke="#1D4ED8" stroke-width="2"/>
+            <path d="M16,20 Q28,16 40,24 Q52,16 64,20 L64,52 Q52,46 40,54 Q28,46 16,52 Z" fill="#FFFFFF"/>
+            <line x1="40" y1="24" x2="40" y2="54" stroke="#93C5FD" stroke-width="2"/>
+            <line x1="22" y1="30" x2="34" y2="32" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="22" y1="38" x2="34" y2="40" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="46" y1="32" x2="58" y2="30" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="46" y1="40" x2="58" y2="38" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="40" cy="12" r="5" fill="#FACC15"/>
+          </svg>`;
+        case 5: // 임진강 (황포돛배와 물결)
+          return `<svg viewBox="0 0 80 70" class="w-16 h-14 flex-shrink-0 drop-shadow">
+            <path d="M38,10 L38,48" stroke="#78350F" stroke-width="3"/>
+            <path d="M40,12 Q62,22 56,44 L40,44 Z" fill="#F59E0B" stroke="#D97706" stroke-width="1.5"/>
+            <path d="M36,16 Q22,26 26,44 L36,44 Z" fill="#FDE047"/>
+            <path d="M16,46 L64,46 L54,58 L26,58 Z" fill="#92400E"/>
+            <path d="M8,58 Q24,52 40,58 T72,58" fill="none" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/>
+          </svg>`;
+        case 6: // 평화누리공원 (네 날개 바람개비)
+          return `<svg viewBox="0 0 80 70" class="w-16 h-14 flex-shrink-0 drop-shadow">
+            <line x1="40" y1="34" x2="40" y2="66" stroke="#78716C" stroke-width="4" stroke-linecap="round"/>
+            <g class="spin-slow" style="transform-origin: 40px 32px;">
+              <path d="M40,32 L22,14 L40,14 Z" fill="#EF4444"/>
+              <path d="M40,32 L58,14 L58,32 Z" fill="#FACC15"/>
+              <path d="M40,32 L58,50 L40,50 Z" fill="#10B981"/>
+              <path d="M40,32 L22,50 L22,32 Z" fill="#3B82F6"/>
+              <circle cx="40" cy="32" r="4.5" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+            </g>
+          </svg>`;
+      }
+    }
+
+    /*************************************************************************
+     * 6. 지도 및 헤더 렌더링
+     * - 데스크톱(3열 그리드)에서는 S자 지그재그 동선이 자연스럽게 이어지도록
+     *   2행(4, 5, 6번 명소)의 시각적 배치와 SVG 점선 경로를 연결합니다.
+     *************************************************************************/
+    function renderAll() {
+      renderHeaderProgress();
+      renderLandmarksMap();
+      updateBannerText();
+      // DOM 레이아웃 확정 후 SVG 점선 경로 및 루미 위치 계산
+      requestAnimationFrame(() => {
+        drawRoadmapSvgPaths();
+        if (!isLumiMoving) {
+          positionLumiAtSession(appState.currentSession, false);
+        }
+      });
+    }
+
+    function renderHeaderProgress() {
+      const completedCount = appState.completedSessions.length;
+      const percent = Math.round((completedCount / 12) * 100);
+
+      document.getElementById('completedCountText').textContent = completedCount;
+      document.getElementById('progressPercentText').textContent = `${percent}%`;
+      document.getElementById('progressBarFill').style.width = `${percent}%`;
+
+      const currentSessionObj = SESSIONS_DATA.find(s => s.session === appState.currentSession) || SESSIONS_DATA[0];
+      document.getElementById('currentLandmarkBadge').textContent =
+        `현재 위치: ${currentSessionObj.landmarkId}. ${currentSessionObj.landmarkName} (${currentSessionObj.session}차시)`;
+
+      // 선생님 모드 체크박스 동기화
+      const tDesktop = document.getElementById('teacherModeToggle');
+      const tMobile = document.getElementById('teacherModeToggleMobile');
+      if (tDesktop) tDesktop.checked = appState.teacherMode;
+      if (tMobile) tMobile.checked = appState.teacherMode;
+
+      // 12개 미니 스탬프 도트 렌더링
+      const stampBar = document.getElementById('headerStampBar');
+      stampBar.innerHTML = SESSIONS_DATA.map(s => {
+        const isDone = appState.completedSessions.includes(s.session);
+        const isCurrent = appState.currentSession === s.session;
+        let btnClass = 'bg-white text-slate-400 border-slate-300';
+        let label = s.session;
+
+        if (isDone) {
+          btnClass = 'bg-amber-400 text-slate-900 border-amber-600 font-bold shadow-sm';
+          label = '⭐';
+        } else if (isCurrent) {
+          btnClass = 'bg-blue-600 text-white border-blue-800 font-bold ring-2 ring-sky-300';
+        }
+
+        return `
+          <button
+            onclick="handleNodeClick(${s.session})"
+            title="${s.session}차시 (${s.landmarkName}): ${s.title}"
+            class="h-6 sm:h-7 rounded-lg border text-[11px] sm:text-xs flex items-center justify-center transition hover:scale-110 ${btnClass}"
+          >
+            ${label}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function updateBannerText() {
+      const completedCount = appState.completedSessions.length;
+      const titleEl = document.getElementById('bannerGuideTitle');
+      const subEl = document.getElementById('bannerGuideSub');
+
+      if (completedCount === 12) {
+        titleEl.textContent = '🎉 "축하해! 파주 6대 명소 12차시 랜선 여행을 모두 완주했어! 너는 최고의 파주 AI 탐험가야!"';
+        subEl.innerHTML = '상단의 <strong class="text-yellow-300 underline cursor-pointer" onclick="openCertificateModal()">🎓 수료증 버튼</strong>을 눌러 나만의 명예 탐험가 임명장을 확인해 보세요!';
+      } else {
+        const curr = SESSIONS_DATA.find(s => s.session === appState.currentSession) || SESSIONS_DATA[0];
+        titleEl.textContent = `"지금은 [${curr.landmarkName}] ${curr.session}차시 미션 차례야! '${curr.title}' 출발해 볼까?"`;
+        subEl.innerHTML = `지도에서 루미가 서 있는 <strong class="text-yellow-300 underline">${curr.session}차시 버튼</strong>을 누르면 수업 주제와 활동 팝업이 열려요! (${completedCount}/12 완료)`;
+      }
+    }
+
+    function renderLandmarksMap() {
+      const grid = document.getElementById('landmarksGrid');
+
+      // 데스크톱 3열 기준 S자 커브(1->2->3 / 6<-5<-4)로 보이도록 lg:order 클래스 지정
+      const lgOrderClasses = {
+        1: 'lg:order-1',
+        2: 'lg:order-2',
+        3: 'lg:order-3',
+        4: 'lg:order-6', // 오른쪽 아래 (3번 바로 밑!)
+        5: 'lg:order-5', // 가운데 아래
+        6: 'lg:order-4'  // 왼쪽 아래
+      };
+
+      grid.innerHTML = LANDMARKS_DATA.map(landmark => {
+        const s1 = SESSIONS_DATA.find(s => s.session === landmark.sessions[0]);
+        const s2 = SESSIONS_DATA.find(s => s.session === landmark.sessions[1]);
+        const isZoneDone = appState.completedSessions.includes(s1.session) && appState.completedSessions.includes(s2.session);
+
+        // 4, 5, 6번 명소는 데스크톱에서 오른쪽->왼쪽으로 진행하므로 내부 노드 순서를 유동적으로 보여줌
+        return `
+          <div class="${lgOrderClasses[landmark.id]} relative rounded-[1.8rem] ${landmark.bgSoft} backdrop-blur-sm border-4 ${isZoneDone ? 'border-amber-400 shadow-amber-200/50' : landmark.borderColor} p-4 sm:p-5 shadow-xl transition hover:shadow-2xl flex flex-col justify-between">
+            
+            <!-- 명소 상단 헤더 -->
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <div class="inline-flex items-center gap-1.5 bg-gradient-to-r ${landmark.badgeColor} text-white font-title text-xs sm:text-sm px-3 py-1 rounded-full shadow">
+                  <span>명소 ${landmark.id}</span>
+                  <span>•</span>
+                  <span>${landmark.sessions[0]}~${landmark.sessions[1]}차시</span>
+                </div>
+                ${isZoneDone ? `<span class="bg-amber-400 text-slate-900 font-title text-xs px-2.5 py-1 rounded-full shadow flex items-center gap-1">🏆 정복 완료!</span>` : ''}
+              </div>
+
+              <div class="flex items-center gap-3 my-2">
+                ${getLandmarkIllustration(landmark.id)}
+                <div>
+                  <h3 class="font-title text-xl sm:text-2xl text-slate-800 leading-tight">${landmark.name}</h3>
+                  <p class="text-xs font-bold text-slate-500 mt-0.5">${landmark.subtitle}</p>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-600 bg-white/80 rounded-xl px-3 py-2 border border-slate-200/80 mb-4 leading-relaxed">
+                💡 ${landmark.funFact}
+              </p>
+            </div>
+
+            <!-- 명소 내 2개 차시 노드 영역 -->
+            <div class="grid grid-cols-2 gap-3 pt-2 relative">
+              ${renderSessionNodeButton(s1)}
+              ${renderSessionNodeButton(s2)}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function isSessionUnlocked(sessionNum) {
+      if (appState.teacherMode) return true;
+      if (sessionNum === 1) return true;
+      if (appState.completedSessions.includes(sessionNum)) return true;
+      if (sessionNum === appState.currentSession) return true;
+      // 이전 차시가 완료되었으면 해금
+      return appState.completedSessions.includes(sessionNum - 1);
+    }
+
+    function renderSessionNodeButton(sessionObj) {
+      const num = sessionObj.session;
+      const isDone = appState.completedSessions.includes(num);
+      const isCurrent = appState.currentSession === num;
+      const unlocked = isSessionUnlocked(num);
+      const isPhysical = num % 2 === 1;
+
+      let cardStyle = '';
+      let badgeIcon = '';
+      let statusLabel = '';
+
+      if (isDone) {
+        cardStyle = 'bg-gradient-to-b from-amber-100 to-amber-200 border-amber-400 text-slate-900 hover:scale-105 cursor-pointer shadow-md';
+        badgeIcon = `<div class="w-11 h-11 rounded-2xl bg-amber-400 text-slate-900 font-title text-xl flex items-center justify-center shadow border-2 border-white mx-auto">⭐</div>`;
+        statusLabel = `<span class="text-[11px] font-title text-amber-800 bg-amber-300/70 px-2 py-0.5 rounded-full">미션 완료!</span>`;
+      } else if (isCurrent) {
+        cardStyle = 'bg-gradient-to-b from-sky-400 to-blue-600 border-yellow-300 text-white node-active-pulse cursor-pointer shadow-xl';
+        badgeIcon = `<div class="w-11 h-11 rounded-2xl bg-yellow-300 text-slate-900 font-title text-xl flex items-center justify-center shadow border-2 border-white mx-auto">${num}</div>`;
+        statusLabel = `<span class="text-[11px] font-title text-slate-900 bg-yellow-300 px-2 py-0.5 rounded-full">🚀 지금 출발!</span>`;
+      } else if (unlocked) {
+        cardStyle = 'bg-white hover:bg-sky-50 border-sky-300 text-slate-800 hover:scale-105 cursor-pointer shadow';
+        badgeIcon = `<div class="w-11 h-11 rounded-2xl bg-sky-100 text-blue-700 font-title text-xl flex items-center justify-center border-2 border-sky-300 mx-auto">${num}</div>`;
+        statusLabel = `<span class="text-[11px] font-bold text-blue-600 bg-sky-100 px-2 py-0.5 rounded-full">클릭 가능</span>`;
+      } else {
+        cardStyle = 'bg-slate-100/90 border-slate-300 text-slate-400 cursor-not-allowed opacity-80';
+        badgeIcon = `<div class="w-11 h-11 rounded-2xl bg-slate-200 text-slate-400 font-title text-lg flex items-center justify-center border-2 border-slate-300 mx-auto"><i class="fa-solid fa-lock"></i></div>`;
+        statusLabel = `<span class="text-[11px] font-bold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-full">잠김</span>`;
+      }
+
+      return `
+        <button
+          id="sessionNode_${num}"
+          onclick="handleNodeClick(${num})"
+          class="group relative rounded-2xl border-3 p-3 text-center transition-all duration-200 flex flex-col items-center justify-between min-h-[148px] ${cardStyle}"
+        >
+          <div class="w-full flex items-center justify-between text-[11px] font-bold mb-1">
+            <span class="${isCurrent ? 'text-sky-100' : 'text-slate-500'}">${num}차시</span>
+            <span>${isPhysical ? '🏃체육' : '🎨창의'}</span>
+          </div>
+
+          <!-- 노드 중심 아이콘 (루미 위치 기준점) -->
+          <div id="nodeAnchor_${num}" class="my-1">
+            ${badgeIcon}
+          </div>
+
+          <div class="w-full mt-1">
+            <div class="font-title text-xs sm:text-sm leading-snug line-clamp-2 mb-1.5 ${isCurrent ? 'text-white' : 'text-slate-800'}">
+              ${sessionObj.title.replace(/\s*\(.*?\)\s*/g, '')}
+            </div>
+            ${statusLabel}
+          </div>
+        </button>
+      `;
+    }
+
+    /*************************************************************************
+     * 7. SVG 점선 로드맵 경로 계산 & 캐릭터 '루미' 위치/점프 애니메이션
+     *************************************************************************/
+    function getNodeCenterInMap(sessionNum) {
+      const mapEl = document.getElementById('mapContainer');
+      const anchorEl = document.getElementById(`nodeAnchor_${sessionNum}`) || document.getElementById(`sessionNode_${sessionNum}`);
+      if (!mapEl || !anchorEl) return { x: 100, y: 100 };
+
+      const mapRect = mapEl.getBoundingClientRect();
+      const anchorRect = anchorEl.getBoundingClientRect();
+
+      return {
+        x: anchorRect.left - mapRect.left + anchorRect.width / 2,
+        y: anchorRect.top - mapRect.top + anchorRect.height / 2
+      };
+    }
+
+    function drawRoadmapSvgPaths() {
+      const svgEl = document.getElementById('roadmapSvgLayer');
+      const mapEl = document.getElementById('mapContainer');
+      if (!svgEl || !mapEl) return;
+
+      const pts = [];
+      for (let i = 1; i <= 12; i++) {
+        pts.push(getNodeCenterInMap(i));
+      }
+
+      // 부드러운 곡선/꺾임 연결 경로 생성
+      const buildPath = (points) => {
+        if (points.length === 0) return '';
+        let d = `M ${points[0].x} ${points[0].y}`;
+        for (let i = 1; i < points.length; i++) {
+          const prev = points[i - 1];
+          const curr = points[i];
+          const midX = (prev.x + curr.x) / 2;
+          const midY = (prev.y + curr.y) / 2 - 14;
+          d += ` Q ${midX} ${midY}, ${curr.x} ${curr.y}`;
+        }
+        return d;
+      };
+
+      const fullD = buildPath(pts);
+      document.getElementById('roadBasePath').setAttribute('d', fullD);
+      document.getElementById('roadInnerPath').setAttribute('d', fullD);
+      document.getElementById('roadDashPath').setAttribute('d', fullD);
+
+      // 현재 차시까지 활성화된 경로
+      const activePts = pts.slice(0, Math.max(1, appState.currentSession));
+      document.getElementById('roadActivePath').setAttribute('d', buildPath(activePts));
+    }
+
+    function positionLumiAtSession(sessionNum, smooth = false) {
+      const avatar = document.getElementById('mapLumiAvatar');
+      if (!avatar) return;
+
+      const pt = getNodeCenterInMap(sessionNum);
+      if (!smooth) {
+        avatar.style.left = `${pt.x}px`;
+        avatar.style.top = `${pt.y}px`;
+      }
+    }
+
+    /**
+     * 루미가 현재 차시 노드에서 다음 차시 노드로 통통 튀며 이동하는 포물선(Parabola Bounce) 애니메이션
+     */
+    function animateLumiHop(fromSession, toSession, onComplete) {
+      const avatar = document.getElementById('mapLumiAvatar');
+      const bubble = document.getElementById('lumiMapBubble');
+      const inner = document.getElementById('lumiAvatarInner');
+      if (!avatar) {
+        if (onComplete) onComplete();
+        return;
+      }
+
+      isLumiMoving = true;
+      const startPt = getNodeCenterInMap(fromSession);
+      const endPt = getNodeCenterInMap(toSession);
+
+      // 목표 노드가 화면에 잘 보이도록 부드럽게 스크롤
+      const targetNodeEl = document.getElementById(`sessionNode_${toSession}`);
+      if (targetNodeEl) {
+        targetNodeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      bubble.textContent = `${toSession}차시로 슝~! ✈️`;
+      inner.classList.remove('lumi-idle');
+
+      // 3번 통통 튀며 이동 (Multi-bounce Hop)
+      const duration = 1250; // ms
+      const hops = 3;
+      const startTime = performance.now();
+
+      playHopSound();
+      setTimeout(() => playHopSound(), 400);
+      setTimeout(() => playHopSound(), 800);
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / duration);
+
+        // Ease-in-out 보간
+        const easeT = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+        const currX = startPt.x + (endPt.x - startPt.x) * easeT;
+        const baseCurrY = startPt.y + (endPt.y - startPt.y) * easeT;
+
+        // 통통 튀는 사인파 점프 높이
+        const bouncePhase = (t * hops) % 1;
+        const jumpHeight = 58;
+        const arcOffset = Math.sin(bouncePhase * Math.PI) * jumpHeight;
+
+        // 착지 순간 살짝 눌렸다가 펴지는 Squash & Stretch
+        const scaleY = 1 + Math.sin(bouncePhase * Math.PI) * 0.12;
+        const scaleX = 1 - Math.sin(bouncePhase * Math.PI) * 0.06;
+
+        avatar.style.left = `${currX}px`;
+        avatar.style.top = `${baseCurrY - arcOffset}px`;
+        inner.style.transform = `scale(${scaleX}, ${scaleY})`;
+
+        if (t < 1) {
+          requestAnimationFrame(step);
+        } else {
+          // 도착 완료!
+          inner.style.transform = '';
+          inner.classList.add('lumi-celebrate');
+          setTimeout(() => {
+            inner.classList.remove('lumi-celebrate');
+            inner.classList.add('lumi-idle');
+          }, 700);
+
+          bubble.textContent = '출발! 클릭해요 👇';
+          isLumiMoving = false;
+          drawRoadmapSvgPaths();
+          if (onComplete) onComplete();
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    // 창 크기 변경 시 경로 및 루미 위치 재계산
+    window.addEventListener('resize', () => {
+      drawRoadmapSvgPaths();
+      if (!isLumiMoving) {
+        positionLumiAtSession(appState.currentSession, false);
+      }
+    });
+
+    /*************************************************************************
+     * 8. 노드 클릭 및 미션 모달 제어
+     *************************************************************************/
+    function handleNodeClick(sessionNum) {
+      const unlocked = isSessionUnlocked(sessionNum);
+      if (!unlocked) {
+        playTone(220, 'sawtooth', 0.15, 0, 0.12);
+        showToast(`🔒 아직 잠겨 있어요! ${appState.currentSession}차시 미션을 먼저 완료하거나 상단 '선생님 모드'를 켜 주세요.`);
+        return;
+      }
+
+      playPopSound();
+
+      // 선생님 모드이거나 이미 열린 다른 노드를 클릭하면 루미를 그곳으로 이동시켜 줌
+      if (sessionNum !== appState.currentSession) {
+        const prev = appState.currentSession;
+        appState.currentSession = sessionNum;
+        saveState();
+        renderAll();
+        positionLumiAtSession(prev, false);
+        animateLumiHop(prev, sessionNum, () => {
+          openMissionModal(sessionNum);
+        });
+      } else {
+        openMissionModal(sessionNum);
+      }
+    }
+
+    function openCurrentSessionModal() {
+      playPopSound();
+      openMissionModal(appState.currentSession);
+    }
+
+    function openMissionModal(sessionNum) {
+      activeModalSession = sessionNum;
+      const data = SESSIONS_DATA.find(s => s.session === sessionNum);
+      if (!data) return;
+
+      // 상단 배지 및 제목 세팅
+      document.getElementById('modalSessionBadge').textContent = `${data.session}차시`;
+      document.getElementById('modalLandmarkBadge').textContent = `📍 명소 ${data.landmarkId}. ${data.landmarkName}`;
+      document.getElementById('modalCategoryBadge').textContent = data.category;
+      document.getElementById('modalTitle').textContent = data.title;
+      document.getElementById('modalLumiQuote').textContent = `"${data.lumiQuote}"`;
+
+      // 헤더 색상 테마 변경 (홀수: 스카이-블루 / 짝수: 인디고-퍼플/에메랄드)
+      const headerBg = document.getElementById('modalHeaderBg');
+      if (sessionNum % 2 === 1) {
+        headerBg.className = 'bg-gradient-to-r from-sky-400 via-blue-600 to-indigo-600 p-4 sm:p-6 text-white relative';
+      } else {
+        headerBg.className = 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4 sm:p-6 text-white relative';
+      }
+
+      // 3단계 세부 활동 체크리스트 렌더링
+      if (!appState.checkedActivities[sessionNum]) {
+        appState.checkedActivities[sessionNum] = [false, false, false];
+      }
+      renderModalChecklist(sessionNum);
+
+      // 차시 맞춤형 미니 체험 위젯 렌더링
+      renderMiniWidget(data);
+
+      // 한 줄 다짐/소감 입력란 및 추천 예시 칩
+      document.getElementById('reflectionPromptTitle').textContent = data.promptLabel;
+      const noteInput = document.getElementById('missionNoteInput');
+      noteInput.value = appState.missionNotes[sessionNum] || '';
+
+      const chipsEl = document.getElementById('quickChipsContainer');
+      chipsEl.innerHTML = data.quickChips.map((chipText) => `
+        <button
+          type="button"
+          onclick="selectQuickChip('${chipText.replace(/'/g, "\\'")}')"
+          class="text-xs bg-sky-100 hover:bg-sky-200 text-blue-800 font-medium px-2.5 py-1 rounded-full border border-sky-300 transition"
+        >
+          💬 ${chipText}
+        </button>
+      `).join('');
+
+      // 완료 버튼 문구
+      const completeBtn = document.getElementById('completeMissionBtn');
+      if (sessionNum === 12) {
+        completeBtn.innerHTML = `<span>🏆 12차시 최종 미션 완료! 파주 여행 완주하기!</span>`;
+      } else {
+        const nextData = SESSIONS_DATA.find(s => s.session === sessionNum + 1);
+        completeBtn.innerHTML = `<span>🎉 미션 완료! ${sessionNum + 1}차시(${nextData.landmarkName})로 출발!</span>`;
+      }
+
+      // 모달 표시 애니메이션
+      const modal = document.getElementById('missionModal');
+      const card = document.getElementById('missionModalCard');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      requestAnimationFrame(() => {
+        card.classList.remove('scale-95', 'opacity-0');
+        card.classList.add('scale-100', 'opacity-100');
+      });
+    }
+
+    function closeMissionModal() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      const modal = document.getElementById('missionModal');
+      const card = document.getElementById('missionModalCard');
+      card.classList.remove('scale-100', 'opacity-100');
+      card.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }, 180);
+    }
+
+    function renderModalChecklist(sessionNum) {
+      const data = SESSIONS_DATA.find(s => s.session === sessionNum);
+      const checks = appState.checkedActivities[sessionNum] || [false, false, false];
+      const doneCount = checks.filter(Boolean).length;
+      document.getElementById('checklistCountText').textContent = `${doneCount} / 3 확인`;
+
+      const listEl = document.getElementById('modalActivitiesList');
+      listEl.innerHTML = data.activities.map((actText, idx) => {
+        const checked = checks[idx];
+        return `
+          <div
+            onclick="toggleActivityCheck(${sessionNum}, ${idx})"
+            class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition ${
+              checked
+                ? 'bg-emerald-50 border-emerald-400 text-emerald-950'
+                : 'bg-white hover:bg-sky-50 border-slate-200 text-slate-700'
+            }"
+          >
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center font-title text-sm flex-shrink-0 ${
+              checked ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-600'
+            }">
+              ${checked ? '<i class="fa-solid fa-check"></i>' : idx + 1}
+            </div>
+            <span class="text-sm sm:text-base font-medium flex-1 ${checked ? 'line-through decoration-emerald-500/60' : ''}">
+              ${actText}
+            </span>
+            <span class="text-xs font-bold ${checked ? 'text-emerald-600' : 'text-slate-400'}">
+              ${checked ? '완료!' : '클릭'}
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleActivityCheck(sessionNum, idx) {
+      playPopSound();
+      if (!appState.checkedActivities[sessionNum]) {
+        appState.checkedActivities[sessionNum] = [false, false, false];
+      }
+      appState.checkedActivities[sessionNum][idx] = !appState.checkedActivities[sessionNum][idx];
+      saveState();
+      renderModalChecklist(sessionNum);
+    }
+
+    function selectQuickChip(text) {
+      playPopSound();
+      const input = document.getElementById('missionNoteInput');
+      input.value = text;
+      input.focus();
+    }
+
+    // 루미 목소리 듣기 (Web Speech API 한국어 TTS)
+    function speakCurrentMission() {
+      const data = SESSIONS_DATA.find(s => s.session === activeModalSession);
+      if (!data) return;
+      if (!('speechSynthesis' in window)) {
+        showToast('이 브라우저에서는 음성 읽기를 지원하지 않아요.');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(
+        `${data.session}차시, ${data.landmarkName}. ${data.title}. ${data.lumiQuote}`
+      );
+      utter.lang = 'ko-KR';
+      utter.rate = 1.05;
+      utter.pitch = 1.25; // 귀여운 루미 톤
+      window.speechSynthesis.speak(utter);
+      showToast('🔊 루미가 미션 내용을 읽어 주고 있어요!');
+    }
+
+    /*************************************************************************
+     * 9. 차시별 미니 체험 활동 위젯 (AI 운동 카운터 / 인터뷰 / 소리악보 / 바람개비)
+     *************************************************************************/
+    function renderMiniWidget(data) {
+      const container = document.getElementById('miniWidgetContainer');
+      const titleEl = document.getElementById('miniWidgetTitle');
+      currentWidgetCount = 0;
+
+      if (data.widgetType === 'fitness') {
+        titleEl.textContent = `🏃 AI 루미 운동 카운터: ${data.widgetActionName}`;
+        container.innerHTML = `
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-xl p-3.5 border border-amber-200">
+            <div class="text-center sm:text-left">
+              <div class="text-xs font-bold text-amber-700">목표: ${data.widgetGoal}${data.widgetUnit} 달성하기</div>
+              <div class="font-title text-2xl sm:text-3xl text-slate-800 mt-0.5">
+                현재 <span id="fitnessCountNum" class="text-blue-600 text-3xl sm:text-4xl">0</span> / ${data.widgetGoal} ${data.widgetUnit}
+              </div>
+              <p id="fitnessCheerText" class="text-xs text-slate-500 mt-1">동작을 1번 할 때마다 오른쪽 버튼을 힘차게 눌러 보세요!</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                onclick="incrementFitnessCounter(${data.widgetGoal}, '${data.widgetUnit}')"
+                class="btn-3d-yellow px-5 py-3 rounded-2xl font-title text-slate-900 text-lg flex items-center gap-2"
+              >
+                <span>💪 하나씩 카운트! (+1)</span>
+              </button>
+              <button
+                type="button"
+                onclick="autoRunFitnessTimer(${data.widgetGoal}, '${data.widgetUnit}')"
+                class="px-3 py-3 rounded-2xl bg-sky-100 hover:bg-sky-200 text-blue-700 font-title text-xs border border-sky-300"
+                title="리듬에 맞춰 자동으로 숫자를 세어 줍니다"
+              >
+                ⏱️ 리듬 자동카운트
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (data.widgetType === 'creative_choice') {
+        titleEl.textContent = `🎨 루미의 상상 스튜디오`;
+        container.innerHTML = `
+          <div class="bg-white rounded-xl p-3.5 border border-amber-200 space-y-2">
+            <p class="text-xs sm:text-sm font-bold text-slate-700">${data.widgetQuestion}</p>
+            <div class="grid grid-cols-1 gap-2">
+              ${data.widgetChoices.map((choice) => `
+                <button
+                  type="button"
+                  onclick="selectCreativeChoice('${choice.replace(/'/g, "\\'")}')"
+                  class="text-left text-xs sm:text-sm font-medium p-2.5 rounded-xl border border-amber-200 hover:border-blue-500 hover:bg-sky-50 transition flex items-center justify-between group"
+                >
+                  <span>${choice}</span>
+                  <span class="text-xs font-bold text-blue-600 opacity-0 group-hover:opacity-100">선택하기 👉</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (data.widgetType === 'interview_sim') {
+        titleEl.textContent = `🎤 출판도시 AI 챗봇 '책벌레 똑똑이' 미니 인터뷰`;
+        container.innerHTML = `
+          <div class="bg-white rounded-xl p-3.5 border border-amber-200 space-y-2.5">
+            <div id="ttokttokiReplyBox" class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-xs sm:text-sm text-indigo-950 font-medium">
+              🐛 <strong>책벌레 똑똑이:</strong> "안녕! 나는 파주출판도시 지혜의 숲에 사는 책벌레 똑똑이야. 아래 질문 버튼을 눌러 나에게 인터뷰를 요청해 봐!"
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="askBookworm(1)" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-900 font-bold px-3 py-1.5 rounded-lg">
+                Q1. 책 한 권이 태어나려면 어떤 과정을 거치나요?
+              </button>
+              <button type="button" onclick="askBookworm(2)" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-900 font-bold px-3 py-1.5 rounded-lg">
+                Q2. 똑똑이가 가장 좋아하는 책 냄새는 뭐예요?
+              </button>
+              <button type="button" onclick="askBookworm(3)" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-900 font-bold px-3 py-1.5 rounded-lg">
+                Q3. 책을 재미있게 읽는 비법을 알려 주세요!
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (data.widgetType === 'sound_composer') {
+        titleEl.textContent = `🎵 임진강 자연 소리 합주 패드 (눌러서 연주해 보세요!)`;
+        container.innerHTML = `
+          <div class="bg-white rounded-xl p-3.5 border border-amber-200 space-y-2.5">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button type="button" onclick="playNaturePad('water', '🌊 찰랑찰랑 물결')" class="p-2.5 rounded-xl bg-sky-100 hover:bg-sky-200 border border-sky-300 font-title text-xs sm:text-sm text-sky-900">
+                🌊 임진강 물결
+              </button>
+              <button type="button" onclick="playNaturePad('reed', '🌾 사각사각 갈대')" class="p-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 border border-amber-300 font-title text-xs sm:text-sm text-amber-900">
+                🌾 갈대 바람
+              </button>
+              <button type="button" onclick="playNaturePad('crane', '🕊️ 푸드덕 두루미')" class="p-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 border border-blue-300 font-title text-xs sm:text-sm text-blue-900">
+                🕊️ 두루미 날갯짓
+              </button>
+              <button type="button" onclick="playNaturePad('boat', '⛵ 영차 황포돛배')" class="p-2.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 font-title text-xs sm:text-sm text-emerald-900">
+                ⛵ 뱃사공 북소리
+              </button>
+            </div>
+            <div id="soundScoreDisplay" class="text-xs font-bold text-slate-600 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 min-h-[34px] flex items-center">
+              🎼 나의 소리 악보: 위 소리 버튼을 순서대로 눌러 악보를 만들어 보세요!
+            </div>
+          </div>
+        `;
+      } else if (data.widgetType === 'pinwheel_roulette') {
+        titleEl.textContent = `🎐 네 날개 건강 바람개비 돌리기!`;
+        container.innerHTML = `
+          <div class="bg-white rounded-xl p-3.5 border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div id="miniPinwheelSvg" class="w-14 h-14 flex items-center justify-center">
+                ${getLandmarkIllustration(6)}
+              </div>
+              <div>
+                <div class="text-xs font-bold text-emerald-700">바람개비가 추천하는 오늘의 틈새 운동</div>
+                <div id="pinwheelResultText" class="font-title text-base sm:text-lg text-slate-800">
+                  오른쪽 버튼을 눌러 바람개비를 쌩쌩 돌려 보세요!
+                </div>
+              </div>
+            </div>
+            <button type="button" onclick="spinHealthPinwheel()" class="btn-3d-green px-4 py-2.5 rounded-xl font-title text-white text-sm whitespace-nowrap">
+              🌬️ 바람개비 돌리기!
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    let fitnessInterval = null;
+    function incrementFitnessCounter(goal, unit) {
+      currentWidgetCount++;
+      playTone(440 + currentWidgetCount * 28, 'triangle', 0.11, 0, 0.16);
+      const numEl = document.getElementById('fitnessCountNum');
+      const cheerEl = document.getElementById('fitnessCheerText');
+      if (numEl) numEl.textContent = currentWidgetCount;
+
+      if (currentWidgetCount >= goal) {
+        if (cheerEl) {
+          cheerEl.innerHTML = `<strong class="text-emerald-600">🎉 우와! 목표 ${goal}${unit} 달성 성공! 정말 대단한 체력이에요!</strong>`;
+        }
+        // 3번째 체크리스트 항목 자동 체크
+        if (appState.checkedActivities[activeModalSession]) {
+          appState.checkedActivities[activeModalSession][2] = true;
+          renderModalChecklist(activeModalSession);
+        }
+      } else if (cheerEl) {
+        cheerEl.textContent = `영차영차! 목표까지 ${goal - currentWidgetCount}${unit} 남았어요! 화이팅!`;
+      }
+    }
+
+    function autoRunFitnessTimer(goal, unit) {
+      if (fitnessInterval) clearInterval(fitnessInterval);
+      fitnessInterval = setInterval(() => {
+        if (currentWidgetCount < goal && !document.getElementById('missionModal').classList.contains('hidden')) {
+          incrementFitnessCounter(goal, unit);
+        } else {
+          clearInterval(fitnessInterval);
+        }
+      }, 650);
+    }
+
+    function selectCreativeChoice(choiceText) {
+      playPopSound();
+      const input = document.getElementById('missionNoteInput');
+      input.value = choiceText;
+      showToast('✨ 멋진 아이디어를 선택했어요!');
+    }
+
+    function askBookworm(qNum) {
+      playPopSound();
+      const box = document.getElementById('ttokttokiReplyBox');
+      const input = document.getElementById('missionNoteInput');
+      const answers = {
+        1: '🐛 <strong>책벌레 똑똑이:</strong> "작가님이 글을 쓰고 ➔ 화가님이 그림을 그리고 ➔ 편집자님이 다듬고 ➔ 파주 인쇄소에서 종이에 찍어내면 멋진 책이 탄생한단다!"',
+        2: '🐛 <strong>책벌레 똑똑이:</strong> "나는 갓 인쇄되어 나온 따끈따끈한 그림책의 종이 향기와 나무 냄새를 세상에서 제일 좋아해!"',
+        3: '🐛 <strong>책벌레 똑똑이:</strong> "책 속 주인공이 만약 나라면 어땠을까? 상상하며 읽으면 책 읽기가 마법처럼 즐거워질 거야!"'
+      };
+      if (box) box.innerHTML = answers[qNum];
+      if (input && !input.value) {
+        input.value = '책벌레 똑똑이와 책이 만들어지는 신기한 비밀을 인터뷰했어요!';
+      }
+    }
+
+    let scoreSequence = [];
+    function playNaturePad(type, label) {
+      if (type === 'water') {
+        playTone(392, 'sine', 0.2, 0, 0.15);
+        playTone(523.25, 'sine', 0.25, 0.1, 0.15);
+      } else if (type === 'reed') {
+        playTone(659.25, 'triangle', 0.18, 0, 0.12);
+        playTone(783.99, 'triangle', 0.18, 0.08, 0.12);
+      } else if (type === 'crane') {
+        playTone(880, 'sine', 0.15, 0, 0.16);
+        playTone(1046.5, 'sine', 0.25, 0.09, 0.16);
+      } else {
+        playTone(196, 'triangle', 0.25, 0, 0.22);
+      }
+
+      scoreSequence.push(label);
+      if (scoreSequence.length > 5) scoreSequence.shift();
+      const disp = document.getElementById('soundScoreDisplay');
+      if (disp) {
+        disp.innerHTML = `🎼 나의 소리 악보: <span class="text-blue-700 ml-1">${scoreSequence.join(' ➔ ')}</span>`;
+      }
+    }
+
+    function spinHealthPinwheel() {
+      playPopSound();
+      const resEl = document.getElementById('pinwheelResultText');
+      const pinwheelOptions = [
+        '🌅 [아침 날개] 짝꿍과 마주 보고 손뼉 치며 기지개 10초!',
+        '🔔 [쉬는 시간 날개] 복도 걸으며 발뒤꿈치 들어 종아리 스트레칭!',
+        '☀️ [점심 날개] 운동장 나무 그늘까지 기분 좋게 산책하기!',
+        '🏡 [방과 후 날개] 집에서 가족과 함께 스쿼트 10개 실천하기!'
+      ];
+      const picked = pinwheelOptions[Math.floor(Math.random() * pinwheelOptions.length)];
+      if (resEl) {
+        resEl.innerHTML = `<span class="text-emerald-700">${picked}</span>`;
+      }
+      const input = document.getElementById('missionNoteInput');
+      if (input && !input.value) {
+        input.value = picked;
+      }
+    }
+
+    /*************************************************************************
+     * 10. '미션 완료!' 버튼 클릭 시 폭죽 + 루미 점프 이동 + 진행도 업데이트
+     *************************************************************************/
+    function completeMissionFromModal() {
+      const completedSession = activeModalSession;
+      const noteInput = document.getElementById('missionNoteInput');
+      if (noteInput && noteInput.value.trim()) {
+        appState.missionNotes[completedSession] = noteInput.value.trim();
+      } else if (!appState.missionNotes[completedSession]) {
+        appState.missionNotes[completedSession] = `${completedSession}차시 미션을 즐겁게 완수했어요! ⭐`;
+      }
+
+      // 체크리스트 모두 완료 처리
+      appState.checkedActivities[completedSession] = [true, true, true];
+
+      // 완료 목록에 추가
+      if (!appState.completedSessions.includes(completedSession)) {
+        appState.completedSessions.push(completedSession);
+        appState.completedSessions.sort((a, b) => a - b);
+      }
+
+      const nextSession = completedSession < 12 ? completedSession + 1 : 12;
+      const shouldMove = completedSession < 12;
+      appState.currentSession = nextSession;
+      saveState();
+
+      // 1) 모달 닫기
+      closeMissionModal();
+
+      // 2) 축하 폭죽 & 팡파레 사운드 실행!
+      triggerConfetti();
+      playFanfareSound();
+
+      // 3) 지도 UI 업데이트 후 루미가 이전 노드에서 다음 노드로 통통 튀며 이동!
+      renderAll();
+
+      if (shouldMove) {
+        positionLumiAtSession(completedSession, false);
+        setTimeout(() => {
+          animateLumiHop(completedSession, nextSession, () => {
+            const nextData = SESSIONS_DATA.find(s => s.session === nextSession);
+            showToast(`🎉 ${completedSession}차시 미션 성공! 루미가 [${nextData.landmarkName}] ${nextSession}차시로 이동했어요!`);
+          });
+        }, 260);
+      } else {
+        // 12차시 최종 완료 시 수료증 모달 자동 오픈!
+        showToast('🏆 축하합니다! 파주 12차시 모든 미션을 완주했어요!');
+        setTimeout(() => {
+          openCertificateModal();
+        }, 900);
+      }
+    }
+
+    /*************************************************************************
+     * 11. 스탬프북 모달 / 수료증 모달 / 선생님 모드 / 초기화 모달
+     *************************************************************************/
+    function openStampBookModal() {
+      playPopSound();
+      const grid = document.getElementById('stampBookGrid');
+      grid.innerHTML = SESSIONS_DATA.map(s => {
+        const isDone = appState.completedSessions.includes(s.session);
+        const note = appState.missionNotes[s.session] || '아직 작성된 미션 기록이 없어요.';
+
+        return `
+          <div
+            onclick="closeStampBookModal(); handleNodeClick(${s.session});"
+            class="rounded-2xl p-3.5 border-2 transition cursor-pointer ${
+              isDone
+                ? 'bg-amber-50/90 border-amber-400 shadow-sm hover:scale-[1.02]'
+                : 'bg-slate-50 border-slate-200 opacity-75 hover:opacity-100'
+            }"
+          >
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-title text-xs px-2.5 py-0.5 rounded-full ${isDone ? 'bg-amber-400 text-slate-900' : 'bg-slate-200 text-slate-600'}">
+                ${s.session}차시 • ${s.landmarkName}
+              </span>
+              <span class="text-xl">${isDone ? '🏅' : '⚪'}</span>
+            </div>
+            <div class="font-title text-sm text-slate-800 mb-1 line-clamp-1">${s.title}</div>
+            <p class="text-xs ${isDone ? 'text-blue-800 bg-white border-amber-200' : 'text-slate-400 bg-slate-100 border-slate-200'} p-2 rounded-xl border line-clamp-2">
+              "${note}"
+            </p>
+          </div>
+        `;
+      }).join('');
+
+      const modal = document.getElementById('stampBookModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeStampBookModal() {
+      const modal = document.getElementById('stampBookModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openCertificateModal() {
+      playPopSound();
+      updateCertPreview();
+      const modal = document.getElementById('certificateModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeCertificateModal() {
+      const modal = document.getElementById('certificateModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function updateCertPreview() {
+      const school = document.getElementById('certSchoolInput').value.trim() || '파주초등학교';
+      const name = document.getElementById('certNameInput').value.trim() || '멋진 탐험가';
+      document.getElementById('certPreviewSchool').textContent = school;
+      document.getElementById('certPreviewName').textContent = name;
+    }
+
+    function toggleTeacherMode(checked) {
+      appState.teacherMode = checked;
+      saveState();
+      renderAll();
+      if (checked) {
+        showToast('🔓 선생님 자유 이동 모드가 켜졌어요! 모든 차시를 자유롭게 클릭할 수 있습니다.');
+      } else {
+        showToast('🔒 학생 순차 진행 모드로 변경되었어요.');
+      }
+    }
+
+    function openResetModal() {
+      playPopSound();
+      const modal = document.getElementById('resetModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeResetModal() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmResetProgress() {
+      appState.currentSession = 1;
+      appState.completedSessions = [];
+      appState.missionNotes = {};
+      appState.checkedActivities = {};
+      saveState();
+      closeResetModal();
+      renderAll();
+      playPopSound();
+      showToast('🔄 여행 기록이 초기화되어 1차시 화석정으로 돌아왔어요!');
+    }
+
+    /*************************************************************************
+     * 12. 토스트 메시지 및 폭죽(Confetti) 애니메이션 엔진
+     *************************************************************************/
+    let toastTimer = null;
+    function showToast(message, icon = '✨') {
+      const toast = document.getElementById('toastMessage');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastText').textContent = message;
+
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4');
+      }, 3200);
+    }
+
+    // 화려한 캔버스 폭죽 효과
+    let confettiParticles = [];
+    let confettiAnimId = null;
+
+    function triggerConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ['#38BDF8', '#2563EB', '#FACC15', '#4ADE80', '#F43F5E', '#A855F7', '#FB923C'];
+
+      for (let i = 0; i < 110; i++) {
+        confettiParticles.push({
+          x: canvas.width * (0.2 + Math.random() * 0.6),
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 18,
+          vy: -Math.random() * 16 - 6,
+          size: Math.random() * 9 + 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vr: (Math.random() - 0.5) * 14,
+          gravity: 0.36,
+          alpha: 1
+        });
+      }
+
+      if (!confettiAnimId) {
+        const renderConfetti = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          confettiParticles.forEach((p) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += p.gravity;
+            p.rotation += p.vr;
+            p.alpha -= 0.008;
+
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+            ctx.restore();
+          });
+
+          confettiParticles = confettiParticles.filter(p => p.alpha > 0 && p.y < canvas.height + 40);
+          if (confettiParticles.length > 0) {
+            confettiAnimId = requestAnimationFrame(renderConfetti);
+          } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiAnimId = null;
+          }
+        };
+        confettiAnimId = requestAnimationFrame(renderConfetti);
+      }
+    }
+
+    /*************************************************************************
+     * 13. 초기 실행
+     *************************************************************************/
+    window.onload = function () {
+      loadState();
+      updateSoundButtons();
+      renderAll();
+
+      // 이미지 로드 상태 재점검 (캐시된 에러 대비)
+      document.querySelectorAll('img.lumi-img').forEach(img => {
+        if (img.complete && img.naturalWidth === 0) {
+          handleLumiImageError(img);
+        }
+      });
+    };
+  </script>
+</body>
+</html>
